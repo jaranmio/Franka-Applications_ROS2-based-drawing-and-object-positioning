@@ -1,0 +1,61 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/selfportrait/ws_moveit/install/pilz_industrial_motion_planner_testutils/include/**",
+        "/home/selfportrait/ws_moveit/install/pilz_industrial_motion_planner/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_visual_tools/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_task_constructor_visualization/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_task_constructor_demo/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_task_constructor_core/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_control_interface/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_simple_controller_manager/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_setup_assistant/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_setup_srdf_plugins/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_setup_core_plugins/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_setup_controllers/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_setup_app_plugins/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_setup_framework/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_servo/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_visualization/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_hybrid_planning/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_planning_interface/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_benchmarks/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_warehouse/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_robot_interaction/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_perception/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_move_group/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_planners_ompl/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_planning/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_ros_occupancy_map_monitor/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_kinematics/include/**",
+        "/home/selfportrait/ws_moveit/install/chomp_motion_planner/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_core/include/**",
+        "/home/selfportrait/ws_moveit/install/srdfdom/include/**",
+        "/home/selfportrait/ws_moveit/install/rviz_marker_tools/include/**",
+        "/home/selfportrait/ws_moveit/install/rosparam_shortcuts/include/**",
+        "/home/selfportrait/ws_moveit/install/moveit_task_constructor_msgs/include/**",
+        "/home/selfportrait/franka_ros2_ws/install/franka_robot_state_broadcaster/include/**",
+        "/home/selfportrait/franka_ros2_ws/install/franka_example_controllers/include/**",
+        "/home/selfportrait/franka_ros2_ws/install/franka_semantic_components/include/**",
+        "/home/selfportrait/franka_ros2_ws/install/franka_ign_ros2_control/include/**",
+        "/home/selfportrait/franka_ros2_ws/install/franka_hardware/include/**",
+        "/home/selfportrait/franka_ros2_ws/install/franka_msgs/include/**",
+        "/home/selfportrait/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros2_messages/include/**",
+        "/home/selfportrait/IsaacSim-ros_workspaces/humble_ws/install/custom_message/include/**",
+        "/opt/ros/humble/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

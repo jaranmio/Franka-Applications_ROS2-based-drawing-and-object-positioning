@@ -1,0 +1,34 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/selfportrait/my_ros2_ws/build/fr3_test",
+        "/home/selfportrait/my_ros2_ws/install/fr3_test/lib/python3.10/site-packages",
+        "/home/selfportrait/ws_moveit/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages",
+        "/home/selfportrait/ws_moveit/install/moveit_configs_utils/lib/python3.10/site-packages",
+        "/home/selfportrait/ws_moveit/install/srdfdom/local/lib/python3.10/dist-packages",
+        "/home/selfportrait/ws_moveit/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages",
+        "/home/selfportrait/ws_moveit/install/launch_param_builder/lib/python3.10/site-packages",
+        "/home/selfportrait/franka_ros2_ws/install/franka_gripper/lib/python3.10/site-packages",
+        "/home/selfportrait/franka_ros2_ws/install/franka_msgs/lib/python3.10/site-packages",
+        "/home/selfportrait/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal/lib/python3.10/site-packages",
+        "/home/selfportrait/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros2_messages/lib/python3.10/site-packages",
+        "/home/selfportrait/IsaacSim-ros_workspaces/humble_ws/install/custom_message/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/selfportrait/my_ros2_ws/build/fr3_test",
+        "/home/selfportrait/my_ros2_ws/install/fr3_test/lib/python3.10/site-packages",
+        "/home/selfportrait/ws_moveit/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages",
+        "/home/selfportrait/ws_moveit/install/moveit_configs_utils/lib/python3.10/site-packages",
+        "/home/selfportrait/ws_moveit/install/srdfdom/local/lib/python3.10/dist-packages",
+        "/home/selfportrait/ws_moveit/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages",
+        "/home/selfportrait/ws_moveit/install/launch_param_builder/lib/python3.10/site-packages",
+        "/home/selfportrait/franka_ros2_ws/install/franka_gripper/lib/python3.10/site-packages",
+        "/home/selfportrait/franka_ros2_ws/install/franka_msgs/lib/python3.10/site-packages",
+        "/home/selfportrait/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal/lib/python3.10/site-packages",
+        "/home/selfportrait/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros2_messages/lib/python3.10/site-packages",
+        "/home/selfportrait/IsaacSim-ros_workspaces/humble_ws/install/custom_message/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

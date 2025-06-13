@@ -1,0 +1,32 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/qpaig/franka_ros2_ws/install/franka_gripper/local/lib/python3.10/dist-packages",
+        "/home/qpaig/franka_ros2_ws/install/franka_msgs/local/lib/python3.10/dist-packages",
+        "/home/qpaig/my_ros2_ws/build/fr3_test",
+        "/home/qpaig/my_ros2_ws/install/fr3_test/lib/python3.10/site-packages",
+        "/home/qpaig/my_ros2_ws/build/fr3_drawing_task",
+        "/home/qpaig/my_ros2_ws/install/fr3_drawing_task/lib/python3.10/site-packages",
+        "/home/qpaig/ws_moveit2/install/moveit_msgs/local/lib/python3.10/dist-packages",
+        "/home/qpaig/ws_moveit2/install/moveit_configs_utils/lib/python3.10/site-packages",
+        "/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal/lib/python3.10/site-packages",
+        "/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros2_messages/local/lib/python3.10/dist-packages",
+        "/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/custom_message/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/qpaig/franka_ros2_ws/install/franka_gripper/local/lib/python3.10/dist-packages",
+        "/home/qpaig/franka_ros2_ws/install/franka_msgs/local/lib/python3.10/dist-packages",
+        "/home/qpaig/my_ros2_ws/build/fr3_test",
+        "/home/qpaig/my_ros2_ws/install/fr3_test/lib/python3.10/site-packages",
+        "/home/qpaig/my_ros2_ws/build/fr3_drawing_task",
+        "/home/qpaig/my_ros2_ws/install/fr3_drawing_task/lib/python3.10/site-packages",
+        "/home/qpaig/ws_moveit2/install/moveit_msgs/local/lib/python3.10/dist-packages",
+        "/home/qpaig/ws_moveit2/install/moveit_configs_utils/lib/python3.10/site-packages",
+        "/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal/lib/python3.10/site-packages",
+        "/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros2_messages/local/lib/python3.10/dist-packages",
+        "/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/custom_message/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}
