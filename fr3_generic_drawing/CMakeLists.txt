@@ -15,8 +15,16 @@ find_package(moveit_ros_planning_interface REQUIRED)
 add_executable(draw_image src/draw_image.cpp)
 ament_target_dependencies(draw_image rclcpp OpenCV moveit_ros_planning_interface geometry_msgs visualization_msgs tf2_ros)
 
+add_executable(draw_image_vector src/draw_image_vector.cpp)
+ament_target_dependencies(draw_image_vector rclcpp OpenCV moveit_ros_planning_interface geometry_msgs visualization_msgs tf2_ros)
+
 install(TARGETS
   draw_image
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS
+  draw_image_vector
   DESTINATION lib/${PROJECT_NAME}
 )
 

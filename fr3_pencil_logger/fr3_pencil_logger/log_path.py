@@ -21,7 +21,7 @@ class PencilTipTracer(Node):
         self.delete_previous_board()
 
         self.current_marker_id = 0
-        self.drawing_height = 0.3 # height of drawing plane
+        self.drawing_height = 0.04 # previous: 0.3
         self.error_margin = 0.003
 
         self.current_marker = self._create_new_marker()
@@ -108,10 +108,10 @@ class PencilTipTracer(Node):
         marker.scale.y = 1.3  # height
         marker.scale.z = 0.001  # very thin plane
 
-        correcting_factor = 0.006
+        # correcting_factor = 0.006
         marker.pose.position.x = 0.85
         marker.pose.position.y = 0.0
-        marker.pose.position.z = self.drawing_height - correcting_factor
+        marker.pose.position.z = 0.0
         marker.pose.orientation.w = 0.0
 
         marker.color.r = 1.0

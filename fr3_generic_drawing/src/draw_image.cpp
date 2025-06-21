@@ -16,13 +16,15 @@
 #include <opencv2/core.hpp>
 #include <stack>
 
-const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/flower_outline.jpg";
-const double CONVERSION_FACTOR = 0.0005; // To convert from pixels to meters; before: 0.0003
-const double DRAWING_HEIGHT = 0.3; // Height of drawing plane relative to the frame set with mg.setPoseReferenceFrame
+const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/star_outline.jpg";
+const double CONVERSION_FACTOR = 0.0006; // To convert from pixels to meters; before: 0.0003
+const double DRAWING_HEIGHT = 0.10; // Height of drawing plane relative to the frame set with mg.setPoseReferenceFrame
+// height prev 0.3
 const double Z_PENCIL_DOWN = DRAWING_HEIGHT;
 const double RAISING_AMOUNT = 0.05;
 const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
-const double X_ORIGIN = 0.5;
+const double X_ORIGIN = 0.25;
+// x_origin prev 0.5
 const double Y_ORIGIN = 0.0;
 const int SEGMENT_SIZE = 10;
 
@@ -238,7 +240,7 @@ int main(int argc, char** argv) {
     mg.setPlanningTime(10);
     mg.setMaxVelocityScalingFactor(0.3);
     mg.setPoseReferenceFrame("fr3_link0");
-    mg.setEndEffectorLink("pencil_tip"); // default is 'fr3_link8'
+    mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8'
     // Constrain pencil to point down
     moveit_msgs::msg::OrientationConstraint oc;
     oc.link_name = mg.getEndEffectorLink();
@@ -255,18 +257,29 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread(IMAGE_PATH, cv::IMREAD_GRAYSCALE);
 
     cv::Mat binary;
-    cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV);
+    cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
     // only for black/white image. previous: cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV);
 
     std::vector<std::vector<cv::Point>> contours = extractPaths(binary);
     contours = mergeCloseContours(contours, 5.0);
+    std::vector<std::vector<cv::Point2f>> contoursFinal = smoothAndResampleContours(contours);
+
+    // Helper code to see extracted contours
+    std::vector<std::vector<cv::Point>> contoursToDraw;
+    for (const auto& smoothStroke : contoursFinal) {
+        if (smoothStroke.empty()) continue;
+        std::vector<cv::Point> converted;
+        for (const auto& pt : smoothStroke)
+            converted.push_back(cv::Point(cvRound(pt.x), cvRound(pt.y)));
+        contoursToDraw.push_back(converted);
+    }
 
     cv::Mat savedImage = cv::Mat(binary.size(), binary.type(), cv::Scalar(255, 255, 255));
-    cv::drawContours(savedImage, contours, -1, cv::Scalar(0, 255, 0), 1);
+    cv::drawContours(savedImage, contoursToDraw, -1, cv::Scalar(0, 255, 0), 1);
     auto saveDir = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/contours.png";
     cv::imwrite(saveDir, savedImage);
 
-    for (const auto& stroke : contours) {
+    for (const auto& stroke : contoursFinal) {
 
         if (stroke.size() < 2) continue;
 
