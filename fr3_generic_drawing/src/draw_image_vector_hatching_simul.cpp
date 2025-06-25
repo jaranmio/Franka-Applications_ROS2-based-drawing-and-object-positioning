@@ -23,13 +23,13 @@
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
 
-const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/fox.svg";
-const double CONVERSION_FACTOR = 0.00009;
-const double DRAWING_HEIGHT = 0.113;
+const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/wolf.svg";
+const double CONVERSION_FACTOR = 0.00015;
+const double DRAWING_HEIGHT = 0.04;
 const double Z_PENCIL_DOWN = DRAWING_HEIGHT;
 const double RAISING_AMOUNT = 0.05;
 const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
-const double X_ORIGIN = 0.4;
+const double X_ORIGIN = 0.6;
 const double Y_ORIGIN = 0.0;
 const int SEGMENT_SIZE = 10;
 
@@ -84,6 +84,27 @@ void flattenCubicBezier(
     }
 }
 
+std::vector<Point> generate_hatching(const std::vector<Point>& contour, float spacing = 10.0f) {
+    if (contour.empty()) return {};
+    float min_x = contour[0].x, max_x = contour[0].x;
+    float min_y = contour[0].y, max_y = contour[0].y;
+    for (const auto& pt : contour) {
+        min_x = std::min(min_x, pt.x);
+        max_x = std::max(max_x, pt.x);
+        min_y = std::min(min_y, pt.y);
+        max_y = std::max(max_y, pt.y);
+    }
+
+    std::vector<Point> hatching_lines;
+    for (float y = min_y; y <= max_y; y += spacing) {
+        Point start = {min_x, y};
+        Point end = {max_x, y};
+        hatching_lines.push_back(start);
+        hatching_lines.push_back(end);
+    }
+    return hatching_lines;
+}
+
 std::vector<std::vector<Point>> extract_svg_paths(NSVGimage* image, float tol = 1.5f) {
     std::vector<std::vector<Point>> all_paths;
     for (NSVGshape* shape = image->shapes; shape; shape = shape->next) {
@@ -98,15 +119,18 @@ std::vector<std::vector<Point>> extract_svg_paths(NSVGimage* image, float tol = 
 
             for (int i = 0; i < npts - 1; i += 3) {
                 float* p = &pts[i * 2];
-                flattenCubicBezier(
-                    p[0], p[1], p[2], p[3],
-                    p[4], p[5], p[6], p[7],
-                    tol, polyline
-                );
+                flattenCubicBezier(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], tol, polyline);
             }
 
             if (polyline.size() >= 2) {
-                all_paths.push_back(std::move(polyline));
+                all_paths.push_back(polyline);
+                if ((shape->fill.type != NSVG_PAINT_NONE)) {
+                    auto hatching = generate_hatching(polyline, 10.0f);
+                    for (size_t i = 0; i + 1 < hatching.size(); i += 2) {
+                        std::vector<Point> line = {hatching[i], hatching[i + 1]};
+                        all_paths.push_back(line);
+                    }
+                }
             }
         }
     }
@@ -143,7 +167,7 @@ int main(int argc, char** argv) {
     mg.setPlanningTime(10);
     mg.setMaxVelocityScalingFactor(0.3);
     mg.setPoseReferenceFrame("fr3_link0");
-    mg.setEndEffectorLink("fr3_hand_tcp");
+    mg.setEndEffectorLink("pencil_tip");
 
     moveit_msgs::msg::OrientationConstraint oc;
     oc.link_name = mg.getEndEffectorLink();
