@@ -23,13 +23,15 @@
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
 
-const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/fox.svg";
-const double CONVERSION_FACTOR = 0.00009;
-const double DRAWING_HEIGHT = 0.113;
+const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/star.svg";
+const double CONVERSION_FACTOR = 0.0001257;
+const double DRAWING_HEIGHT = 0.136;
+// 0.132 - creata color monolith HB 
+// 0.16 (approx. not working) - carbon sketch
 const double Z_PENCIL_DOWN = DRAWING_HEIGHT;
 const double RAISING_AMOUNT = 0.05;
 const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
-const double X_ORIGIN = 0.4;
+const double X_ORIGIN = 0.49;
 const double Y_ORIGIN = 0.0;
 const int SEGMENT_SIZE = 10;
 

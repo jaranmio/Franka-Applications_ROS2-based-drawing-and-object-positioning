@@ -1,0 +1,59 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/qpaig/franka_ros2_ws/install/franka_robot_state_broadcaster/include/**",
+        "/home/qpaig/franka_ros2_ws/install/franka_example_controllers/include/**",
+        "/home/qpaig/franka_ros2_ws/install/franka_semantic_components/include/**",
+        "/home/qpaig/franka_ros2_ws/install/franka_ign_ros2_control/include/**",
+        "/home/qpaig/franka_ros2_ws/install/franka_hardware/include/**",
+        "/home/qpaig/franka_ros2_ws/install/franka_msgs/include/**",
+        "/home/qpaig/ws_moveit2/install/pilz_industrial_motion_planner_testutils/include/**",
+        "/home/qpaig/ws_moveit2/install/pilz_industrial_motion_planner/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_control_interface/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_simple_controller_manager/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_setup_assistant/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_setup_srdf_plugins/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_setup_core_plugins/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_setup_controllers/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_setup_app_plugins/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_setup_framework/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_servo/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_visualization/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_hybrid_planning/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_planning_interface/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_benchmarks/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_warehouse/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_robot_interaction/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_perception/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_move_group/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_planners_ompl/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_planning/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_ros_occupancy_map_monitor/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_kinematics/include/**",
+        "/home/qpaig/ws_moveit2/install/chomp_motion_planner/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_core/include/**",
+        "/home/qpaig/ws_moveit2/install/moveit_msgs/include/**",
+        "/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros2_messages/include/**",
+        "/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/custom_message/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/include/**",
+        "/home/qpaig/my_ros2_ws/src/fr3_mathematical_drawing/include/**",
+        "/home/qpaig/my_ros2_ws/src/fr3_pick_and_place/include/**",
+        "/home/qpaig/my_ros2_ws/src/position_calibration/include/**",
+        "include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
