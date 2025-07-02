@@ -16,15 +16,15 @@
 #include <opencv2/core.hpp>
 #include <stack>
 
-const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/star_outline.jpg";
-const double CONVERSION_FACTOR = 0.0006; // To convert from pixels to meters; before: 0.0003
-const double DRAWING_HEIGHT = 0.10; // Height of drawing plane relative to the frame set with mg.setPoseReferenceFrame
-// height prev 0.3
+const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/image.png";
+const double CONVERSION_FACTOR = 0.0001257 * 2.5;
+const double DRAWING_HEIGHT = 0.134;
+// 0.132 - creata color monolith HB 
+// 0.16 (approx. not working) - carbon sketch
 const double Z_PENCIL_DOWN = DRAWING_HEIGHT;
 const double RAISING_AMOUNT = 0.05;
 const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
-const double X_ORIGIN = 0.25;
-// x_origin prev 0.5
+const double X_ORIGIN = 0.49;
 const double Y_ORIGIN = 0.0;
 const int SEGMENT_SIZE = 10;
 
@@ -232,11 +232,8 @@ int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
     
     auto node = rclcpp::Node::make_shared("fr3_sketch_node");
-
-    // Spin in parallel to update internal robot state so that things like 'mg.getCurrentPose()' has updated value
-    std::thread spinner([&]() { rclcpp::spin(node); });
-
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
+    mg.startStateMonitor();
     mg.setPlanningTime(10);
     mg.setMaxVelocityScalingFactor(0.3);
     mg.setPoseReferenceFrame("fr3_link0");
@@ -254,87 +251,93 @@ int main(int argc, char** argv) {
     pc.orientation_constraints.push_back(oc);
     mg.setPathConstraints(pc);
 
-    cv::Mat img = cv::imread(IMAGE_PATH, cv::IMREAD_GRAYSCALE);
+    rclcpp::CallbackGroup::SharedPtr timer_group = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
-    cv::Mat binary;
-    cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    // only for black/white image. previous: cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV);
+    rclcpp::TimerBase::SharedPtr timer = node->create_wall_timer(std::chrono::milliseconds(0), [node, &mg]() {
+        cv::Mat img = cv::imread(IMAGE_PATH, cv::IMREAD_GRAYSCALE);
 
-    std::vector<std::vector<cv::Point>> contours = extractPaths(binary);
-    contours = mergeCloseContours(contours, 5.0);
-    std::vector<std::vector<cv::Point2f>> contoursFinal = smoothAndResampleContours(contours);
+        cv::Mat binary;
+        cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+        // only for black/white image. previous: cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV);
 
-    // Helper code to see extracted contours
-    std::vector<std::vector<cv::Point>> contoursToDraw;
-    for (const auto& smoothStroke : contoursFinal) {
-        if (smoothStroke.empty()) continue;
-        std::vector<cv::Point> converted;
-        for (const auto& pt : smoothStroke)
-            converted.push_back(cv::Point(cvRound(pt.x), cvRound(pt.y)));
-        contoursToDraw.push_back(converted);
-    }
+        std::vector<std::vector<cv::Point>> contours = extractPaths(binary);
+        contours = mergeCloseContours(contours, 5.0);
+        std::vector<std::vector<cv::Point2f>> contoursFinal = smoothAndResampleContours(contours);
 
-    cv::Mat savedImage = cv::Mat(binary.size(), binary.type(), cv::Scalar(255, 255, 255));
-    cv::drawContours(savedImage, contoursToDraw, -1, cv::Scalar(0, 255, 0), 1);
-    auto saveDir = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/contours.png";
-    cv::imwrite(saveDir, savedImage);
-
-    for (const auto& stroke : contoursFinal) {
-
-        if (stroke.size() < 2) continue;
-
-        // Plan to the starting pose
-        geometry_msgs::msg::Pose lift_start = image_to_pose(stroke.front().x, stroke.front().y, img.cols, img.rows, Z_PENCIL_RAISED);
-        std::vector<geometry_msgs::msg::Pose> lift_start_path = {mg.getCurrentPose().pose, lift_start};
-        moveit_msgs::msg::RobotTrajectory lift_start_traj;
-        double start_frac = mg.computeCartesianPath(lift_start_path, 0.01, 0.0, lift_start_traj);
-        if (start_frac >= 0.95) {
-            moveit::planning_interface::MoveGroupInterface::Plan plan;
-            plan.trajectory_ = lift_start_traj;
-            mg.execute(plan);
+        // Helper code to see extracted contours
+        std::vector<std::vector<cv::Point>> contoursToDraw;
+        for (const auto& smoothStroke : contoursFinal) {
+            if (smoothStroke.empty()) continue;
+            std::vector<cv::Point> converted;
+            for (const auto& pt : smoothStroke)
+                converted.push_back(cv::Point(cvRound(pt.x), cvRound(pt.y)));
+            contoursToDraw.push_back(converted);
         }
 
-        for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE) {
+        cv::Mat savedImage = cv::Mat(binary.size(), binary.type(), cv::Scalar(255, 255, 255));
+        cv::drawContours(savedImage, contoursToDraw, -1, cv::Scalar(0, 255, 0), 1);
+        auto saveDir = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/contours.png";
+        cv::imwrite(saveDir, savedImage);
+        
+        for (const auto& stroke : contoursFinal) {
 
-            size_t end = std::min(i + SEGMENT_SIZE, stroke.size());
-            std::vector<geometry_msgs::msg::Pose> segment;
-            for (size_t j = i; j < end; ++j) {
-                int x = stroke[j].x; // clamp(stroke[j].x, 0, img.cols - 1);
-                int y = stroke[j].y; // clamp(stroke[j].y, 0, img.rows - 1);
-                segment.push_back(image_to_pose(x, y, img.cols, img.rows, Z_PENCIL_DOWN));
-            }
-            if (segment.size() < 2) continue;
+            if (stroke.size() < 2) continue;
 
-            moveit_msgs::msg::RobotTrajectory seg_traj;
-            double frac = mg.computeCartesianPath(segment, 0.005, 0.0, seg_traj);
-            if (frac >= 0.95) {
+            // Plan to the starting pose
+            geometry_msgs::msg::Pose lift_start = image_to_pose(stroke.front().x, stroke.front().y, img.cols, img.rows, Z_PENCIL_RAISED);
+            std::vector<geometry_msgs::msg::Pose> lift_start_path = {mg.getCurrentPose().pose, lift_start};
+            moveit_msgs::msg::RobotTrajectory lift_start_traj;
+            double start_frac = mg.computeCartesianPath(lift_start_path, 0.01, 0.0, lift_start_traj);
+            if (start_frac >= 0.95) {
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
-                plan.trajectory_ = seg_traj;
+                plan.trajectory_ = lift_start_traj;
                 mg.execute(plan);
-            } else {
-                mg.setPoseTarget(segment.back());
-                moveit::planning_interface::MoveGroupInterface::Plan plan;
-                if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
-                {
+            }
+
+            for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE) {
+
+                size_t end = std::min(i + SEGMENT_SIZE, stroke.size());
+                std::vector<geometry_msgs::msg::Pose> segment;
+                for (size_t j = i; j < end; ++j) {
+                    int x = stroke[j].x; // clamp(stroke[j].x, 0, img.cols - 1);
+                    int y = stroke[j].y; // clamp(stroke[j].y, 0, img.rows - 1);
+                    segment.push_back(image_to_pose(x, y, img.cols, img.rows, Z_PENCIL_DOWN));
+                }
+                if (segment.size() < 2) continue;
+
+                moveit_msgs::msg::RobotTrajectory seg_traj;
+                double frac = mg.computeCartesianPath(segment, 0.005, 0.0, seg_traj);
+                if (frac >= 0.95) {
+                    moveit::planning_interface::MoveGroupInterface::Plan plan;
+                    plan.trajectory_ = seg_traj;
                     mg.execute(plan);
                 } else {
+                    mg.setPoseTarget(segment.back());
+                    moveit::planning_interface::MoveGroupInterface::Plan plan;
+                    if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
+                    {
+                        mg.execute(plan);
+                    } else {
+                    }
                 }
             }
-        }
 
-        // Plan to the next start pose
-        geometry_msgs::msg::Pose lift_end = image_to_pose(stroke.back().x, stroke.back().y, img.cols, img.rows, Z_PENCIL_RAISED);
-        std::vector<geometry_msgs::msg::Pose> lift_end_path = {mg.getCurrentPose().pose, lift_end};
-        moveit_msgs::msg::RobotTrajectory lift_end_traj;
-        double end_frac = mg.computeCartesianPath(lift_end_path, 0.01, 0.0, lift_end_traj);
-        if (end_frac >= 0.95) {
-            moveit::planning_interface::MoveGroupInterface::Plan plan;
-            plan.trajectory_ = lift_end_traj;
-            mg.execute(plan);
+            // Plan to the next start pose
+            geometry_msgs::msg::Pose lift_end = image_to_pose(stroke.back().x, stroke.back().y, img.cols, img.rows, Z_PENCIL_RAISED);
+            std::vector<geometry_msgs::msg::Pose> lift_end_path = {mg.getCurrentPose().pose, lift_end};
+            moveit_msgs::msg::RobotTrajectory lift_end_traj;
+            double end_frac = mg.computeCartesianPath(lift_end_path, 0.01, 0.0, lift_end_traj);
+            if (end_frac >= 0.95) {
+                moveit::planning_interface::MoveGroupInterface::Plan plan;
+                plan.trajectory_ = lift_end_traj;
+                mg.execute(plan);
+            }
         }
-    }
+        rclcpp::shutdown();
+    }, timer_group);
 
-    rclcpp::shutdown();
-    spinner.join(); // make sure to wait for spin cleanup
+    rclcpp::executors::MultiThreadedExecutor executor;
+    executor.add_node(node);
+    executor.spin();
     return 0;
 }

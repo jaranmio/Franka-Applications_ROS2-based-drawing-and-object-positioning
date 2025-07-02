@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <polyline points="
+    100,10 
+    120,70 
+    180,70 
+    130,110 
+    150,170 
+    100,130 
+    50,170 
+    70,110 
+    20,70 
+    80,70 
+    100,10
+  " 
+  style="fill:none;stroke:black;stroke-width:2" />
+</svg>
