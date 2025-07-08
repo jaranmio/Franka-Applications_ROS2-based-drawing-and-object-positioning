@@ -15,7 +15,7 @@
 #include <tf2_eigen/tf2_eigen.h>
 #endif
 
-static const rclcpp::Logger LOGGER = rclcpp::get_logger("pick_place_logger");
+static const rclcpp::Logger LOGGER = rclcpp::get_logger("mtc_tutorial");
 namespace mtc = moveit::task_constructor;
 
 class MTCTaskNode
@@ -37,7 +37,7 @@ private:
 };
 
 MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions& options)
-  : node_{ std::make_shared<rclcpp::Node>("pick_place_node", options) }
+  : node_{ std::make_shared<rclcpp::Node>("mtc_node", options) }
 {
 }
 
@@ -122,7 +122,7 @@ mtc::Task MTCTaskNode::createTask()
   auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
   cartesian_planner->setMaxVelocityScalingFactor(1.0);
   cartesian_planner->setMaxAccelerationScalingFactor(1.0);
-  cartesian_planner->setStepSize(.01);
+  cartesian_planner->setStepSize(.001);
 
   // clang-format off
   auto stage_open_hand =
@@ -184,7 +184,7 @@ mtc::Task MTCTaskNode::createTask()
       stage->properties().set("marker_ns", "grasp_pose");
       stage->setPreGraspPose("open");
       stage->setObject("object");
-      stage->setAngleDelta(M_PI / 12);
+      stage->setAngleDelta(M_PI / 20);
       stage->setMonitoredStage(current_state_ptr);  // Hook into current state
 
       // This is the transform from the object frame to the end-effector frame
@@ -200,8 +200,8 @@ mtc::Task MTCTaskNode::createTask()
       auto wrapper =
           std::make_unique<mtc::stages::ComputeIK>("grasp pose IK", std::move(stage));
       // clang-format on
-      wrapper->setMaxIKSolutions(8);
-      wrapper->setMinSolutionDistance(1.0);
+      wrapper->setMaxIKSolutions(32 * 4);
+      wrapper->setMinSolutionDistance(0.01 / 6);
       wrapper->setIKFrame(grasp_frame_transform, hand_frame);
       wrapper->properties().configureInitFrom(mtc::Stage::PARENT, { "eef", "group" });
       wrapper->properties().configureInitFrom(mtc::Stage::INTERFACE, { "target_pose" });
@@ -260,7 +260,7 @@ mtc::Task MTCTaskNode::createTask()
     auto stage_move_to_place = std::make_unique<mtc::stages::Connect>(
         "move to place",
         mtc::stages::Connect::GroupPlannerVector{ { arm_group_name, sampling_planner },
-                                                  { hand_group_name, interpolation_planner } });
+                                                   });
     // clang-format on
     stage_move_to_place->setTimeout(5.0);
     stage_move_to_place->properties().configureInitFrom(mtc::Stage::PARENT);
@@ -297,8 +297,8 @@ mtc::Task MTCTaskNode::createTask()
       auto wrapper =
           std::make_unique<mtc::stages::ComputeIK>("place pose IK", std::move(stage));
       // clang-format on
-      wrapper->setMaxIKSolutions(2);
-      wrapper->setMinSolutionDistance(1.0);
+      wrapper->setMaxIKSolutions(32);
+      wrapper->setMinSolutionDistance(0.01);
       wrapper->setIKFrame("object");
       wrapper->properties().configureInitFrom(mtc::Stage::PARENT, { "eef", "group" });
       wrapper->properties().configureInitFrom(mtc::Stage::INTERFACE, { "target_pose" });
@@ -354,6 +354,7 @@ mtc::Task MTCTaskNode::createTask()
     stage->setGoal("ready");
     task.add(std::move(stage));
   }
+
   return task;
 }
 

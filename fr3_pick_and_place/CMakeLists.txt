@@ -16,12 +16,30 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
+find_package(moveit_task_constructor_core REQUIRED)
+find_package(franka_msgs REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(control_msgs REQUIRED)
 
 add_executable(perception_node src/perception_node.cpp)
-ament_target_dependencies(perception_node rclcpp std_msgs sensor_msgs cv_bridge image_transport tf2_ros tf2_geometry_msgs geometry_msgs moveit_ros_planning_interface)
+ament_target_dependencies(perception_node rclcpp std_msgs sensor_msgs cv_bridge image_transport tf2_ros tf2_geometry_msgs geometry_msgs moveit_ros_planning_interface moveit_task_constructor_core franka_msgs rclcpp_action rclcpp_components std_srvs control_msgs)
+
+target_include_directories(perception_node PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
+
+target_compile_features(perception_node PUBLIC c_std_99 cxx_std_17)
 
 add_executable(pick_place_node src/pick_place_node.cpp)
-ament_target_dependencies(pick_place_node rclcpp std_msgs sensor_msgs cv_bridge image_transport tf2_ros tf2_geometry_msgs geometry_msgs moveit_ros_planning_interface)
+ament_target_dependencies(pick_place_node rclcpp std_msgs sensor_msgs cv_bridge image_transport tf2_ros tf2_geometry_msgs geometry_msgs moveit_ros_planning_interface moveit_task_constructor_core franka_msgs rclcpp_action rclcpp_components std_srvs control_msgs)
+
+target_include_directories(pick_place_node PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
+
+target_compile_features(pick_place_node PUBLIC c_std_99 cxx_std_17)
 
 install(TARGETS
   perception_node

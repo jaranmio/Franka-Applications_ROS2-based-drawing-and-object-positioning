@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: franka_description
+    relative_path: robots/fr3/fr3.urdf
+  SRDF:
+    relative_path: config/fr3_arm_hand.srdf.xacro
+  CONFIG:
+    author_name: Leo
+    author_email: leokeran@mit.edu
+    generated_timestamp: 1519152260
