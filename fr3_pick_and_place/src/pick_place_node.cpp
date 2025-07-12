@@ -252,7 +252,7 @@ mtc::Task MTCTaskNode::createTask()
       auto stage = std::make_unique<mtc::stages::MoveTo>("close hand", interpolation_planner);
       stage->setGroup(hand_group_name);
       stage->setGoal(std::map<std::string, double>{{"fr3_finger_joint1", 0.025}, {"fr3_finger_joint2", 0.025}});
-      stage->setGoal("close");
+      // stage->setGoal("close");
       grasp->insert(std::move(stage));
     }
 
