@@ -18,6 +18,112 @@
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("pick_place_logger");
 namespace mtc = moveit::task_constructor;
 
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+#include <franka_msgs/action/grasp.hpp>        // Franka Grasp action definition:contentReference[oaicite:5]{index=5}
+#include <moveit/planning_scene/planning_scene.h>
+#include <moveit/robot_state/robot_state.h>
+#include <moveit/task_constructor/stage.h>
+
+using GraspAction = franka_msgs::action::Grasp;
+using GraspGoalHandle = rclcpp_action::ClientGoalHandle<GraspAction>;
+
+class GraspStage : public moveit::task_constructor::PropagatingForward {
+public:
+  // Constructor: pass in an existing Node to use for action client
+  GraspStage(const std::string& name, const rclcpp::Node::SharedPtr& node)
+    : PropagatingForward(name), node_(node)
+  {
+    // Initialize action client for the FR3 gripper's Grasp action
+    client_ = rclcpp_action::create_client<GraspAction>(node_, "/fr3_gripper/grasp");
+    // Declare configurable properties for grasp parameters (with defaults)
+    this->properties().declare<double>("width", 0.05, "Target gripper width [m] after grasp");        // e.g. 5 cm object
+    this->properties().declare<double>("speed", 0.1, "Gripper closing speed [m/s]");                 // default 0.1 m/s:contentReference[oaicite:6]{index=6}
+    this->properties().declare<double>("force", 30.0, "Gripper grasp force [N]");                    // e.g. 30 N force
+    this->properties().declare<double>("epsilon_inner", 0.005, "Grasp inner tolerance [m]");         // 5 mm inner tolerance:contentReference[oaicite:7]{index=7}
+    this->properties().declare<double>("epsilon_outer", 0.005, "Grasp outer tolerance [m]");         // 5 mm outer tolerance:contentReference[oaicite:8]{index=8}
+  }
+
+protected:
+  void computeForward(const moveit::task_constructor::InterfaceState& from) override {
+    // 1. Wait for the gripper action server to be ready
+    if (!client_->wait_for_action_server(std::chrono::seconds(5))) {
+      RCLCPP_ERROR(node_->get_logger(), "Grasp action server not available on /fr3_gripper/grasp");
+      this->silentFailure();  // report failure without a solution trajectory
+      return;
+    }
+
+    // 2. Set up the Grasp goal from stage properties
+    GraspAction::Goal goal;
+    goal.width = this->properties().get<double>("width");
+    goal.speed = this->properties().get<double>("speed");
+    goal.force = this->properties().get<double>("force");
+    goal.epsilon.inner = this->properties().get<double>("epsilon_inner");
+    goal.epsilon.outer = this->properties().get<double>("epsilon_outer");
+    RCLCPP_INFO(node_->get_logger(), "Sending gripper grasp goal: width=%.3f, speed=%.2f, force=%.1f",
+                goal.width, goal.speed, goal.force);
+
+    // 3. Send the goal asynchronously and wait for the result
+    auto goal_handle_future = client_->async_send_goal(goal);
+    if (rclcpp::spin_until_future_complete(node_, goal_handle_future, std::chrono::seconds(5)) 
+          != rclcpp::FutureReturnCode::SUCCESS) {
+      RCLCPP_ERROR(node_->get_logger(), "Failed to send grasp goal");
+      this->silentFailure();
+      return;
+    }
+    auto goal_handle = goal_handle_future.get();
+    if (!goal_handle) {
+      RCLCPP_ERROR(node_->get_logger(), "Grasp goal rejected by action server");
+      this->silentFailure();
+      return;
+    }
+    // Goal accepted, now wait for result
+    auto result_future = client_->async_get_result(goal_handle);
+    if (rclcpp::spin_until_future_complete(node_, result_future, std::chrono::seconds(10)) 
+          != rclcpp::FutureReturnCode::SUCCESS) {
+      RCLCPP_ERROR(node_->get_logger(), "Grasp action timed out waiting for result");
+      this->silentFailure();
+      return;
+    }
+    // Check the result of the action
+    auto result = result_future.get();
+    if (result.code != rclcpp_action::ResultCode::SUCCEEDED) {
+      RCLCPP_ERROR(node_->get_logger(), "Grasp action did not succeed (result code %d)", static_cast<int>(result.code));
+      this->silentFailure();
+      return;
+    }
+    if (!result.result->success) {
+      RCLCPP_ERROR(node_->get_logger(), "Grasp failed: %s", result.result->error.c_str());
+      this->silentFailure();
+      return;
+    }
+    RCLCPP_INFO(node_->get_logger(), "Grasp action succeeded!");  // Gripper has closed on the object
+
+    // 4. Create a new planning scene state as a diff from the input
+    planning_scene::PlanningScenePtr end_scene = from.scene()->diff();  // child scene with 'from' as parent
+    // Update the gripper joint positions to reflect the closed width
+    double target_width = goal.width;
+    double finger_position = target_width / 2.0;  // each finger moves half the width
+    moveit::core::RobotState& end_state = end_scene->getCurrentStateNonConst();
+    end_state.setJointPositions("fr3_finger_joint1", &finger_position);
+    end_state.setJointPositions("fr3_finger_joint2", &finger_position);
+    // (Note: Adjust joint names as needed if different. For FR3, they follow the pattern fr3_finger_joint1/2.)
+
+    // 5. Construct a solution without a trajectory (the action execution isn't a standard trajectory)
+    moveit::task_constructor::SubTrajectory solution;
+    solution.setComment("Gripper grasp executed");  // add a comment for clarity
+    solution.setCost(0.0);  // closing gripper cost (negligible here)
+
+    // 6. Propagate the new state forward to the next stage
+    sendForward(from, std::move(end_scene), std::move(solution));  // forward the updated scene:contentReference
+  }
+
+private:
+  rclcpp::Node::SharedPtr node_;
+  rclcpp_action::Client<GraspAction>::SharedPtr client_;
+};
+
+
 class MTCTaskNode
 {
 public:
@@ -210,7 +316,7 @@ mtc::Task MTCTaskNode::createTask()
                              Eigen::AngleAxisd(0, Eigen::Vector3d::UnitY()) *
                              Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ());
       grasp_frame_transform.linear() = q.matrix();
-      grasp_frame_transform.translation().z() = 0.1 * 0.2;
+      grasp_frame_transform.translation().z() = 0.1 * 0.22;
 
       // Compute IK
       // clang-format off
@@ -239,10 +345,21 @@ mtc::Task MTCTaskNode::createTask()
     }
 
     {
-      auto stage = std::make_unique<mtc::stages::MoveTo>("close hand", interpolation_planner);
-      stage->setGroup(hand_group_name);
-      stage->setGoal("close");
-      grasp->insert(std::move(stage));
+      //auto stage = std::make_unique<mtc::stages::MoveTo>("close hand", interpolation_planner);
+      //stage->setGroup(hand_group_name);
+      //stage->setGoal(std::map<std::string, double>{{"fr3_finger_joint1", 0.025}, {"fr3_finger_joint2", 0.025}});
+      //stage->setGoal("close");
+      //grasp->insert(std::move(stage));
+
+      auto grasp_stage = std::make_unique<GraspStage>("close gripper", node_);
+      // Optionally override default properties:
+      grasp_stage->setProperty("width", 0.025);        // target gap of 9 mm
+      grasp_stage->setProperty("speed", 0.03);         // closing speed 0.03 m/s
+      grasp_stage->setProperty("force", 23.0);         // grasp force 23 N
+      grasp_stage->setProperty("epsilon_inner", 0.002);
+      grasp_stage->setProperty("epsilon_outer", 0.002);
+      // Add the stage to the task
+      grasp->insert(std::move(grasp_stage));
     }
 
     {
