@@ -1,64 +1,15 @@
-chomp:
-  add_randomness: false
-  animate_endeffector: false
-  animate_endeffector_segment: fr3_rightfinger
-  animate_path: true
-  collision_clearance: 0.2
-  collision_threshold: 0.07
-  enable_failure_recovery: false
-  hmc_annealing_factor: 0.99
-  hmc_discretization: 0.01
-  hmc_stochasticity: 0.01
-  joint_update_limit: 0.1
-  learning_rate: 0.01
-  max_iterations: 200
-  max_iterations_after_collision_free: 5
-  max_recovery_attempts: 5
-  obstacle_cost_weight: 1.0
-  planning_plugin: chomp_interface/CHOMPPlanner
-  planning_time_limit: 10.0
-  pseudo_inverse_ridge_factor: 0.0001
-  random_jump_amount: 1.0
-  request_adapters: default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints
-  ridge_factor: 0.0
-  smoothness_cost_acceleration: 1.0
-  smoothness_cost_jerk: 0.0
-  smoothness_cost_velocity: 0.0
-  smoothness_cost_weight: 0.1
-  start_state_max_bounds_error: 0.1
-  trajectory_initialization_method: quintic-spline
-  use_hamiltonian_monte_carlo: false
-  use_pseudo_inverse: false
-  use_stochastic_descent: true
-default_planning_pipeline: ompl
+default_planning_pipeline: move_group
+fr3_arm:
+  kinematics_solver: lma_kinematics_plugin/LMAKinematicsPlugin
+  kinematics_solver_ik_links: null
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.005
+fr3_manipulator:
+  kinematics_solver: null
 hand:
   kinematics_solver: null
-moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
-moveit_manage_controllers: true
-moveit_simple_controller_manager:
-  controller_names:
-    - fr3_arm_controller
-    - fr3_hand_controller
-  fr3_arm_controller:
-    action_ns: follow_joint_trajectory
-    default: true
-    joints:
-      - fr3_joint1
-      - fr3_joint2
-      - fr3_joint3
-      - fr3_joint4
-      - fr3_joint5
-      - fr3_joint6
-      - fr3_joint7
-    type: FollowJointTrajectory
-  fr3_hand_controller:
-    action_ns: gripper_cmd
-    default: true
-    joints:
-      - fr3_finger_joint1
-    type: GripperCommand
-ompl:
-  hand:
+move_group:
+  panda_arm:
     planner_configs:
       - SBLkConfigDefault
       - ESTkConfigDefault
@@ -84,33 +35,7 @@ ompl:
       - SPARSkConfigDefault
       - SPARStwokConfigDefault
       - TrajOptDefault
-  fr3_arm:
-    planner_configs:
-      - SBLkConfigDefault
-      - ESTkConfigDefault
-      - LBKPIECEkConfigDefault
-      - BKPIECEkConfigDefault
-      - KPIECEkConfigDefault
-      - RRTkConfigDefault
-      - RRTConnectkConfigDefault
-      - RRTstarkConfigDefault
-      - TRRTkConfigDefault
-      - PRMkConfigDefault
-      - PRMstarkConfigDefault
-      - FMTkConfigDefault
-      - BFMTkConfigDefault
-      - PDSTkConfigDefault
-      - STRIDEkConfigDefault
-      - BiTRRTkConfigDefault
-      - LBTRRTkConfigDefault
-      - BiESTkConfigDefault
-      - ProjESTkConfigDefault
-      - LazyPRMkConfigDefault
-      - LazyPRMstarkConfigDefault
-      - SPARSkConfigDefault
-      - SPARStwokConfigDefault
-      - TrajOptDefault
-  fr3_arm_hand:
+  panda_arm_hand:
     planner_configs:
       - SBLkConfigDefault
       - ESTkConfigDefault
@@ -263,23 +188,35 @@ ompl:
   planning_plugin: ompl_interface/OMPLPlanner
   request_adapters: default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/ResolveConstraintFrames default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints
   start_state_max_bounds_error: 0.1
-fr3_arm:
-  kinematics_solver: null
-fr3_arm_hand:
-  kinematics_solver: null
-pilz_industrial_motion_planner:
-  capabilities: pilz_industrial_motion_planner/MoveGroupSequenceAction pilz_industrial_motion_planner/MoveGroupSequenceService
-  default_planner_config: PTP
-  planning_plugin: pilz_industrial_motion_planner/CommandPlanner
-  request_adapters: default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints
-planning_pipelines:
-  - ompl
-  - chomp
-  - pilz_industrial_motion_planner
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+moveit_manage_controllers: true
+moveit_simple_controller_manager:
+  controller_names:
+    - fr3_arm_controller
+    - fr3_gripper
+  fr3_arm_controller:
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+      - fr3_joint1
+      - fr3_joint2
+      - fr3_joint3
+      - fr3_joint4
+      - fr3_joint5
+      - fr3_joint6
+      - fr3_joint7
+    type: FollowJointTrajectory
+  fr3_gripper:
+    action_ns: gripper_action
+    default: true
+    joints:
+      - fr3_finger_joint1
+      - fr3_finger_joint2
+    type: GripperCommand
 publish_geometry_updates: true
 publish_planning_scene: true
-publish_robot_description: false
-publish_robot_description_semantic: false
+publish_robot_description: null
+publish_robot_description_semantic: null
 publish_state_updates: true
 publish_transforms_updates: true
 qos_overrides:
@@ -289,261 +226,75 @@ qos_overrides:
       durability: volatile
       history: keep_last
       reliability: reliable
-robot_description: <?xml version="1.0" ?><!-- =================================================================================== --><!-- |    This document was autogenerated by xacro from /home/qpaig/ws_moveit2/install/moveit_resources_fr3_moveit_config/share/moveit_resources_fr3_moveit_config/config/fr3.urdf.xacro | --><!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | --><!-- =================================================================================== --><robot name="fr3"><link name="fr3_link0"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/link0.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/link0.stl"/></geometry></collision></link><link name="fr3_link1"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/link1.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/link1.stl"/></geometry></collision></link><joint name="fr3_joint1" type="revolute"><safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.8973" soft_upper_limit="2.8973"/><origin rpy="0 0 0" xyz="0 0 0.333"/><parent link="fr3_link0"/><child link="fr3_link1"/><axis xyz="0 0 1"/><limit effort="87" lower="-2.9671" upper="2.9671" velocity="2.3925"/></joint><link name="fr3_link2"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/link2.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/link2.stl"/></geometry></collision></link><joint name="fr3_joint2" type="revolute"><safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-1.7628" soft_upper_limit="1.7628"/><origin rpy="-1.57079632679 0 0" xyz="0 0 0"/><parent link="fr3_link1"/><child link="fr3_link2"/><axis xyz="0 0 1"/><limit effort="87" lower="-1.8326" upper="1.8326" velocity="2.3925"/></joint><link name="fr3_link3"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/link3.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/link3.stl"/></geometry></collision></link><joint name="fr3_joint3" type="revolute"><safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.8973" soft_upper_limit="2.8973"/><origin rpy="1.57079632679 0 0" xyz="0 -0.316 0"/><parent link="fr3_link2"/><child link="fr3_link3"/><axis xyz="0 0 1"/><limit effort="87" lower="-2.9671" upper="2.9671" velocity="2.3925"/></joint><link name="fr3_link4"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/link4.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/link4.stl"/></geometry></collision></link><joint name="fr3_joint4" type="revolute"><safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.0718" soft_upper_limit="0.0175"/><origin rpy="1.57079632679 0 0" xyz="0.0825 0 0"/><parent link="fr3_link3"/><child link="fr3_link4"/><axis xyz="0 0 1"/><limit effort="87" lower="-3.1416" upper="0.0873" velocity="2.3925"/></joint><link name="fr3_link5"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/link5.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/link5.stl"/></geometry></collision></link><joint name="fr3_joint5" type="revolute"><safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.8973" soft_upper_limit="2.8973"/><origin rpy="-1.57079632679 0 0" xyz="-0.0825 0.384 0"/><parent link="fr3_link4"/><child link="fr3_link5"/><axis xyz="0 0 1"/><limit effort="12" lower="-2.9671" upper="2.9671" velocity="2.8710"/></joint><link name="fr3_link6"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/link6.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/link6.stl"/></geometry></collision></link><joint name="fr3_joint6" type="revolute"><safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-0.0175" soft_upper_limit="3.7525"/><origin rpy="1.57079632679 0 0" xyz="0 0 0"/><parent link="fr3_link5"/><child link="fr3_link6"/><axis xyz="0 0 1"/><limit effort="12" lower="-0.0873" upper="3.8223" velocity="2.8710"/></joint><link name="fr3_link7"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/link7.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/link7.stl"/></geometry></collision></link><joint name="fr3_joint7" type="revolute"><safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.8973" soft_upper_limit="2.8973"/><origin rpy="1.57079632679 0 0" xyz="0.088 0 0"/><parent link="fr3_link6"/><child link="fr3_link7"/><axis xyz="0 0 1"/><limit effort="12" lower="-2.9671" upper="2.9671" velocity="2.8710"/></joint><link name="fr3_link8"/><joint name="fr3_joint8" type="fixed"><origin rpy="0 0 0" xyz="0 0 0.107"/><parent link="fr3_link7"/><child link="fr3_link8"/><axis xyz="0 0 0"/></joint><joint name="fr3_hand_joint" type="fixed"><parent link="fr3_link8"/><child link="fr3_hand"/><origin rpy="0 0 -0.785398163397" xyz="0 0 0"/></joint><link name="fr3_hand"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/hand.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/hand.stl"/></geometry></collision></link><link name="fr3_leftfinger"><visual><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/finger.dae"/></geometry></visual><collision><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/finger.stl"/></geometry></collision></link><link name="fr3_rightfinger"><visual><origin rpy="0 0 3.14159265359" xyz="0 0 0"/><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/visual/finger.dae"/></geometry></visual><collision><origin rpy="0 0 3.14159265359" xyz="0 0 0"/><geometry><mesh filename="package://moveit_resources_fr3_description/meshes/collision/finger.stl"/></geometry></collision></link><joint name="fr3_finger_joint1" type="prismatic"><parent link="fr3_hand"/><child link="fr3_leftfinger"/><origin rpy="0 0 0" xyz="0 0 0.0584"/><axis xyz="0 1 0"/><limit effort="20" lower="0.0" upper="0.04" velocity="0.2"/></joint><joint name="fr3_finger_joint2" type="prismatic"><parent link="fr3_hand"/><child link="fr3_rightfinger"/><origin rpy="0 0 0" xyz="0 0 0.0584"/><axis xyz="0 -1 0"/><limit effort="20" lower="0.0" upper="0.04" velocity="0.2"/><mimic joint="fr3_finger_joint1"/></joint><ros2_control name="PandaFakeSystem" type="system"><hardware><plugin>mock_components/GenericSystem</plugin></hardware><joint name="fr3_joint1"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint><joint name="fr3_joint2"><command_interface name="position"/><state_interface name="position"><param name="initial_value">-0.785</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint><joint name="fr3_joint3"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint><joint name="fr3_joint4"><command_interface name="position"/><state_interface name="position"><param name="initial_value">-2.356</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint><joint name="fr3_joint5"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint><joint name="fr3_joint6"><command_interface name="position"/><state_interface name="position"><param name="initial_value">1.571</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint><joint name="fr3_joint7"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.785</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint></ros2_control><ros2_control name="PandaHandFakeSystem" type="system"><hardware><plugin>mock_components/GenericSystem</plugin></hardware><joint name="fr3_finger_joint1"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint><joint name="fr3_finger_joint2"><param name="mimic">fr3_finger_joint1</param><param name="multiplier">1</param><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"><param name="initial_value">0.0</param></state_interface></joint></ros2_control></robot>
+robot_description: "<?xml version=\"1.0\" ?>\n<!-- =================================================================================== -->\n<!-- |    This document was autogenerated by xacro from /opt/ros/humble/share/franka_description/robots/fr3/fr3.urdf.xacro | -->\n<!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->\n<!-- =================================================================================== -->\n<robot name=\"fr3\">\n  <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->\n  <!-- arm_id: Namespace of the robot arm. Serves to differentiate between arms in case of multiple instances. -->\n  <!-- joint_limits: description of the joint limits that comes from a YAML file. Example definition: ${xacro.load_yaml('$(find franka_description)/robots/fr3/joint_limits.yaml')} -->\n  <!-- kinematics: description of the kinematics that comes from a YAML file. Example definition: ${xacro.load_yaml('$(find franka_description)/robots/fr3/kinematics.yaml')} -->\n  <!-- inertials: description of the inertials that comes from a YAML file. Example definition: ${xacro.load_yaml('$(find franka_description)/robots/fr3/inertials.yaml')} -->\n  <!-- dynamics: description of the dynamics that comes from a YAML file. Example definition: ${xacro.load_yaml('$(find franka_description)/robots/fr3/dynamics.yaml')} -->\n  <link name=\"base\">\n      </link>\n  <joint name=\"fr3_base_joint\" type=\"fixed\">\n    <parent link=\"base\"/>\n    <child link=\"fr3_link0\"/>\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n  </joint>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_link0\">\n    <visual name=\"fr3_link0_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/visual/link0.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_link0_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/collision/link0.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"-0.0172 0.0004 0.0745\"/>\n      <mass value=\"2.3966\"/>\n      <inertia ixx=\"0.009\" ixy=\"0.0\" ixz=\"0.002\" iyy=\"0.0115\" iyz=\"0.0\" izz=\"0.0085\"/>\n    </inertial>\n  </link>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_link1\">\n    <visual name=\"fr3_link1_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/visual/link1.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_link1_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/collision/link1.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"0.0000004128 -0.0181251324 -0.0386035970\"/>\n      <mass value=\"2.9274653454\"/>\n      <inertia ixx=\"0.023927316485107913\" ixy=\"1.3317903455714081e-05\" ixz=\"-0.00011404774918616684\" iyy=\"0.0224821613275756\" iyz=\"-0.0019950320628240115\" izz=\"0.006350098258530016\"/>\n    </inertial>\n  </link>\n  <joint name=\"fr3_joint1\" type=\"revolute\">\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0.333\"/>\n    <parent link=\"fr3_link0\"/>\n    <child link=\"fr3_link1\"/>\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"87.0\" lower=\"-2.7437\" upper=\"2.7437\" velocity=\"2.62\"/>\n    <safety_controller k_position=\"100.0\" k_velocity=\"40.0\" soft_lower_limit=\"-2.7437\" soft_upper_limit=\"2.7437\"/>\n    <dynamics D=\"1\" K=\"7000\" damping=\"0.003\" friction=\"0.2\" mu_coulomb=\"0\" mu_viscous=\"16\"/>\n  </joint>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_link2\">\n    <visual name=\"fr3_link2_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/visual/link2.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_link2_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/collision/link2.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"0.0031828864 -0.0743221644 0.0088146084\"/>\n      <mass value=\"2.9355370338\"/>\n      <inertia ixx=\"0.041938946257609425\" ixy=\"0.00020257331521090626\" ixz=\"0.004077784227179924\" iyy=\"0.02514514885014724\" iyz=\"-0.0042252158006570156\" izz=\"0.06170214472888839\"/>\n    </inertial>\n  </link>\n  <joint name=\"fr3_joint2\" type=\"revolute\">\n    <origin rpy=\"-1.570796326794897 0 0\" xyz=\"0 0 0\"/>\n    <parent link=\"fr3_link1\"/>\n    <child link=\"fr3_link2\"/>\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"87.0\" lower=\"-1.7837\" upper=\"1.7837\" velocity=\"2.62\"/>\n    <safety_controller k_position=\"100.0\" k_velocity=\"40.0\" soft_lower_limit=\"-1.7837\" soft_upper_limit=\"1.7837\"/>\n    <dynamics D=\"1\" K=\"7000\" damping=\"0.003\" friction=\"0.2\" mu_coulomb=\"0\" mu_viscous=\"16\"/>\n  </joint>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_link3\">\n    <visual name=\"fr3_link3_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/visual/link3.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_link3_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/collision/link3.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"0.0407015686 -0.0048200565 -0.0289730823\"/>\n      <mass value=\"2.2449013699\"/>\n      <inertia ixx=\"0.02410142547240885\" ixy=\"0.002404694559042109\" ixz=\"-0.002856269270114313\" iyy=\"0.01974053266708178\" iyz=\"-0.002104212683891874\" izz=\"0.019044494482244823\"/>\n    </inertial>\n  </link>\n  <joint name=\"fr3_joint3\" type=\"revolute\">\n    <origin rpy=\"1.570796326794897 0 0\" xyz=\"0 -0.316 0\"/>\n    <parent link=\"fr3_link2\"/>\n    <child link=\"fr3_link3\"/>\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"87.0\" lower=\"-2.9007\" upper=\"2.9007\" velocity=\"2.62\"/>\n    <safety_controller k_position=\"100.0\" k_velocity=\"40.0\" soft_lower_limit=\"-2.9007\" soft_upper_limit=\"2.9007\"/>\n    <dynamics D=\"1\" K=\"7000\" damping=\"0.003\" friction=\"0.2\" mu_coulomb=\"0\" mu_viscous=\"16\"/>\n  </joint>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_link4\">\n    <visual name=\"fr3_link4_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/visual/link4.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_link4_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/collision/link4.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"-0.0459100965 0.0630492960 -0.0085187868\"/>\n      <mass value=\"2.6155955791\"/>\n      <inertia ixx=\"0.03452998321913202\" ixy=\"0.01322552265982813\" ixz=\"0.01015142998484113\" iyy=\"0.028881621933049058\" iyz=\"-0.0009762833870704552\" izz=\"0.04125471171146641\"/>\n    </inertial>\n  </link>\n  <joint name=\"fr3_joint4\" type=\"revolute\">\n    <origin rpy=\"1.570796326794897 0 0\" xyz=\"0.0825 0 0\"/>\n    <parent link=\"fr3_link3\"/>\n    <child link=\"fr3_link4\"/>\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"87.0\" lower=\"-3.0421\" upper=\"-0.1518\" velocity=\"2.62\"/>\n    <safety_controller k_position=\"100.0\" k_velocity=\"40.0\" soft_lower_limit=\"-3.0421\" soft_upper_limit=\"-0.1518\"/>\n    <dynamics D=\"1\" K=\"7000\" damping=\"0.003\" friction=\"0.2\" mu_coulomb=\"0\" mu_viscous=\"16\"/>\n  </joint>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_link5\">\n    <visual name=\"fr3_link5_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/visual/link5.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_link5_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/collision/link5.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"-0.0016039605 0.0292536262 -0.0972965990\"/>\n      <mass value=\"2.3271207594\"/>\n      <inertia ixx=\"0.051610278463662895\" ixy=\"-0.005715173387783472\" ixz=\"-0.0035673167625872135\" iyy=\"0.04787729713371481\" iyz=\"0.010673985108535986\" izz=\"0.016423625579357254\"/>\n    </inertial>\n  </link>\n  <joint name=\"fr3_joint5\" type=\"revolute\">\n    <origin rpy=\"-1.570796326794897 0 0\" xyz=\"-0.0825 0.384 0\"/>\n    <parent link=\"fr3_link4\"/>\n    <child link=\"fr3_link5\"/>\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"12.0\" lower=\"-2.8065\" upper=\"2.8065\" velocity=\"5.26\"/>\n    <safety_controller k_position=\"100.0\" k_velocity=\"40.0\" soft_lower_limit=\"-2.8065\" soft_upper_limit=\"2.8065\"/>\n    <dynamics D=\"1\" K=\"7000\" damping=\"0.003\" friction=\"0.2\" mu_coulomb=\"0\" mu_viscous=\"16\"/>\n  </joint>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_link6\">\n    <visual name=\"fr3_link6_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/visual/link6.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_link6_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/collision/link6.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"0.0597131221 -0.0410294666 -0.0101692726\"/>\n      <mass value=\"1.8170376524\"/>\n      <inertia ixx=\"0.005412333594383447\" ixy=\"0.006193456360285834\" ixz=\"0.0014219289306117652\" iyy=\"0.014058329545509979\" iyz=\"-0.0013140753741120031\" izz=\"0.016080817924212554\"/>\n    </inertial>\n  </link>\n  <joint name=\"fr3_joint6\" type=\"revolute\">\n    <origin rpy=\"1.570796326794897 0 0\" xyz=\"0 0 0\"/>\n    <parent link=\"fr3_link5\"/>\n    <child link=\"fr3_link6\"/>\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"12.0\" lower=\"0.5445\" upper=\"4.5169\" velocity=\"4.18\"/>\n    <safety_controller k_position=\"100.0\" k_velocity=\"40.0\" soft_lower_limit=\"0.5445\" soft_upper_limit=\"4.5169\"/>\n    <dynamics D=\"1\" K=\"7000\" damping=\"0.003\" friction=\"0.2\" mu_coulomb=\"0\" mu_viscous=\"16\"/>\n  </joint>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_link7\">\n    <visual name=\"fr3_link7_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/visual/link7.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_link7_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_arms/fr3/collision/link7.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"0.0045225817 0.0086261921 -0.0161633251\"/>\n      <mass value=\"0.6271432862\"/>\n      <inertia ixx=\"0.00021092389150104718\" ixy=\"-2.433299114461931e-05\" ixz=\"4.564480393778983e-05\" iyy=\"0.00017718568002411474\" iyz=\"8.744070223226438e-05\" izz=\"5.993190599659971e-05\"/>\n    </inertial>\n  </link>\n  <joint name=\"fr3_joint7\" type=\"revolute\">\n    <origin rpy=\"1.570796326794897 0 0\" xyz=\"0.088 0 0\"/>\n    <parent link=\"fr3_link6\"/>\n    <child link=\"fr3_link7\"/>\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"12.0\" lower=\"-3.0159\" upper=\"3.0159\" velocity=\"5.26\"/>\n    <safety_controller k_position=\"100.0\" k_velocity=\"40.0\" soft_lower_limit=\"-3.0159\" soft_upper_limit=\"3.0159\"/>\n    <dynamics D=\"1\" K=\"7000\" damping=\"0.003\" friction=\"0.2\" mu_coulomb=\"0\" mu_viscous=\"16\"/>\n  </joint>\n  <link name=\"fr3_link8\"/>\n  <joint name=\"fr3_joint8\" type=\"fixed\">\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0.107\"/>\n    <parent link=\"fr3_link7\"/>\n    <child link=\"fr3_link8\"/>\n  </joint>\n  <joint name=\"fr3_hand_joint\" type=\"fixed\">\n    <parent link=\"fr3_link8\"/>\n    <child link=\"fr3_hand\"/>\n    <origin rpy=\"0 0 -0.7853981633974483\" xyz=\"0 0 0\"/>\n  </joint>\n  <!-- sub-link defining detailed meshes for collision with environment -->\n  <link name=\"fr3_hand\">\n    <visual name=\"fr3_hand_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_ee/franka_hand_white/visual/hand.dae\"/>\n      </geometry>\n    </visual>\n    <collision name=\"fr3_hand_collision\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_ee/franka_hand_white/collision/hand.stl\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"-0.01 0 0.03\"/>\n      <mass value=\"0.73\"/>\n      <inertia ixx=\"0.001\" ixy=\"0\" ixz=\"0\" iyy=\"0.0025\" iyz=\"0\" izz=\"0.0017\"/>\n    </inertial>\n  </link>\n  <!-- Define the hand_tcp frame -->\n  <link name=\"fr3_hand_tcp\"/>\n  <joint name=\"fr3_hand_tcp_joint\" type=\"fixed\">\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0.1034\"/>\n    <parent link=\"fr3_hand\"/>\n    <child link=\"fr3_hand_tcp\"/>\n  </joint>\n  <link name=\"fr3_leftfinger\">\n    <visual name=\"fr3_leftfinger_visual\">\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_ee/franka_hand_white/visual/finger.dae\"/>\n      </geometry>\n    </visual>\n    <!-- screw mount -->\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 18.5e-3 11e-3\"/>\n      <geometry>\n        <box size=\"22e-3 15e-3 20e-3\"/>\n      </geometry>\n    </collision>\n    <!-- cartriage sledge -->\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 6.8e-3 2.2e-3\"/>\n      <geometry>\n        <box size=\"22e-3 8.8e-3 3.8e-3\"/>\n      </geometry>\n    </collision>\n    <!-- diagonal finger -->\n    <collision>\n      <origin rpy=\"0.5235987755982988 0 0\" xyz=\"0 15.9e-3 28.35e-3\"/>\n      <geometry>\n        <box size=\"17.5e-3 7e-3 23.5e-3\"/>\n      </geometry>\n    </collision>\n    <!-- rubber tip with which to grasp -->\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 7.58e-3 45.25e-3\"/>\n      <geometry>\n        <box size=\"17.5e-3 15.2e-3 18.5e-3\"/>\n      </geometry>\n    </collision>\n  </link>\n  <link name=\"fr3_rightfinger\">\n    <visual name=\"fr3_rightfinger_visual\">\n      <origin rpy=\"0 0 3.141592653589793\" xyz=\"0 0 0\"/>\n      <geometry>\n        <mesh filename=\"package://franka_description/meshes/robot_ee/franka_hand_white/visual/finger.dae\"/>\n      </geometry>\n    </visual>\n    <!-- screw mount -->\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 -18.5e-3 11e-3\"/>\n      <geometry>\n        <box size=\"22e-3 15e-3 20e-3\"/>\n      </geometry>\n    </collision>\n    <!-- cartriage sledge -->\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 -6.8e-3 2.2e-3\"/>\n      <geometry>\n        <box size=\"22e-3 8.8e-3 3.8e-3\"/>\n      </geometry>\n    </collision>\n    <!-- diagonal finger -->\n    <collision>\n      <origin rpy=\"-0.5235987755982988 0 0\" xyz=\"0 -15.9e-3 28.35e-3\"/>\n      <geometry>\n        <box size=\"17.5e-3 7e-3 23.5e-3\"/>\n      </geometry>\n    </collision>\n    <!-- rubber tip with which to grasp -->\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 -7.58e-3 45.25e-3\"/>\n      <geometry>\n        <box size=\"17.5e-3 15.2e-3 18.5e-3\"/>\n      </geometry>\n    </collision>\n  </link>\n  <joint name=\"fr3_finger_joint1\" type=\"prismatic\">\n    <parent link=\"fr3_hand\"/>\n    <child link=\"fr3_leftfinger\"/>\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0.0584\"/>\n    <axis xyz=\"0 1 0\"/>\n    <limit effort=\"100\" lower=\"0.0\" upper=\"0.04\" velocity=\"0.2\"/>\n    <dynamics damping=\"0.3\"/>\n  </joint>\n  <joint name=\"fr3_finger_joint2\" type=\"prismatic\">\n    <parent link=\"fr3_hand\"/>\n    <child link=\"fr3_rightfinger\"/>\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0.0584\"/>\n    <axis xyz=\"0 -1 0\"/>\n    <limit effort=\"100\" lower=\"0.0\" upper=\"0.04\" velocity=\"0.2\"/>\n    <mimic joint=\"fr3_finger_joint1\"/>\n    <dynamics damping=\"0.3\"/>\n  </joint>\n  <ros2_control name=\"FrankaHardwareInterface\" type=\"system\">\n    <hardware>\n      <param name=\"arm_id\">fr3</param>\n      <param name=\"prefix\"></param>\n      <plugin>franka_hardware/FrankaHardwareInterface</plugin>\n      <param name=\"robot_ip\">172.16.0.2</param>\n      <param name=\"arm_prefix\"></param>\n    </hardware>\n    <joint name=\"fr3_joint1\">\n      <command_interface name=\"position\"/>\n      <command_interface name=\"velocity\"/>\n      <command_interface name=\"effort\"/>\n      <!-- State Interfaces -->\n      <state_interface name=\"position\">\n        <param name=\"initial_value\">0.0</param>\n      </state_interface>\n      <state_interface name=\"velocity\"/>\n      <param name=\"initial_value\">0.0</param>\n      <state_interface name=\"effort\"/>\n    </joint>\n    <joint name=\"fr3_joint2\">\n      <command_interface name=\"position\"/>\n      <command_interface name=\"velocity\"/>\n      <command_interface name=\"effort\"/>\n      <!-- State Interfaces -->\n      <state_interface name=\"position\">\n        <param name=\"initial_value\">-0.7853981633974483</param>\n      </state_interface>\n      <state_interface name=\"velocity\"/>\n      <param name=\"initial_value\">0.0</param>\n      <state_interface name=\"effort\"/>\n    </joint>\n    <joint name=\"fr3_joint3\">\n      <command_interface name=\"position\"/>\n      <command_interface name=\"velocity\"/>\n      <command_interface name=\"effort\"/>\n      <!-- State Interfaces -->\n      <state_interface name=\"position\">\n        <param name=\"initial_value\">0.0</param>\n      </state_interface>\n      <state_interface name=\"velocity\"/>\n      <param name=\"initial_value\">0.0</param>\n      <state_interface name=\"effort\"/>\n    </joint>\n    <joint name=\"fr3_joint4\">\n      <command_interface name=\"position\"/>\n      <command_interface name=\"velocity\"/>\n      <command_interface name=\"effort\"/>\n      <!-- State Interfaces -->\n      <state_interface name=\"position\">\n        <param name=\"initial_value\">-2.356194490192345</param>\n      </state_interface>\n      <state_interface name=\"velocity\"/>\n      <param name=\"initial_value\">0.0</param>\n      <state_interface name=\"effort\"/>\n    </joint>\n    <joint name=\"fr3_joint5\">\n      <command_interface name=\"position\"/>\n      <command_interface name=\"velocity\"/>\n      <command_interface name=\"effort\"/>\n      <!-- State Interfaces -->\n      <state_interface name=\"position\">\n        <param name=\"initial_value\">0.0</param>\n      </state_interface>\n      <state_interface name=\"velocity\"/>\n      <param name=\"initial_value\">0.0</param>\n      <state_interface name=\"effort\"/>\n    </joint>\n    <joint name=\"fr3_joint6\">\n      <command_interface name=\"position\"/>\n      <command_interface name=\"velocity\"/>\n      <command_interface name=\"effort\"/>\n      <!-- State Interfaces -->\n      <state_interface name=\"position\">\n        <param name=\"initial_value\">1.5707963267948966</param>\n      </state_interface>\n      <state_interface name=\"velocity\"/>\n      <param name=\"initial_value\">0.0</param>\n      <state_interface name=\"effort\"/>\n    </joint>\n    <joint name=\"fr3_joint7\">\n      <command_interface name=\"position\"/>\n      <command_interface name=\"velocity\"/>\n      <command_interface name=\"effort\"/>\n      <!-- State Interfaces -->\n      <state_interface name=\"position\">\n        <param name=\"initial_value\">0.7853981633974483</param>\n      </state_interface>\n      <state_interface name=\"velocity\"/>\n      <param name=\"initial_value\">0.0</param>\n      <state_interface name=\"effort\"/>\n    </joint>\n  </ros2_control>\n</robot>\n"
 robot_description_kinematics:
+  fr3_manipulator:
+    kinematics_solver: null
+    kinematics_solver_ik_links: null
+    kinematics_solver_search_resolution: null
+    kinematics_solver_timeout: null
   hand:
     kinematics_solver: null
     kinematics_solver_ik_links: null
     kinematics_solver_search_resolution: null
     kinematics_solver_timeout: null
-  fr3_arm:
-    kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
-    kinematics_solver_ik_links: null
-    kinematics_solver_search_resolution: 0.005
-    kinematics_solver_timeout: 0.05
-  fr3_arm_hand:
-    kinematics_solver: null
-    kinematics_solver_ik_links: null
-    kinematics_solver_search_resolution: null
-    kinematics_solver_timeout: null
 robot_description_planning:
-  cartesian_limits:
-    max_rot_vel: 1.57
-    max_trans_acc: 2.25
-    max_trans_dec: -5.0
-    max_trans_vel: 1.0
   joint_limits:
     fr3_finger_joint1:
-      angle_wraparound: false
-      has_acceleration_limits: false
-      has_deceleration_limits: false
-      has_effort_limits: false
+      has_acceleration_limits: null
       has_jerk_limits: null
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: true
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: 0.0
-      max_effort: .nan
-      max_jerk: .nan
+      has_velocity_limits: null
       max_position: null
-      max_velocity: 0.1
       min_position: null
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
     fr3_finger_joint2:
-      has_acceleration_limits: false
+      has_acceleration_limits: null
       has_jerk_limits: null
-      has_velocity_limits: true
-      max_acceleration: 0.0
+      has_velocity_limits: null
       max_position: null
-      max_velocity: 0.1
       min_position: null
     fr3_joint1:
-      angle_wraparound: false
-      has_acceleration_limits: true
-      has_deceleration_limits: false
-      has_effort_limits: false
+      has_acceleration_limits: null
       has_jerk_limits: null
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: true
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: 3.75
-      max_effort: .nan
-      max_jerk: .nan
+      has_velocity_limits: null
       max_position: null
-      max_velocity: 2.175
       min_position: null
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
     fr3_joint2:
-      angle_wraparound: false
-      has_acceleration_limits: true
-      has_deceleration_limits: false
-      has_effort_limits: false
+      has_acceleration_limits: null
       has_jerk_limits: null
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: true
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: 1.875
-      max_effort: .nan
-      max_jerk: .nan
+      has_velocity_limits: null
       max_position: null
-      max_velocity: 2.175
       min_position: null
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
     fr3_joint3:
-      angle_wraparound: false
-      has_acceleration_limits: true
-      has_deceleration_limits: false
-      has_effort_limits: false
+      has_acceleration_limits: null
       has_jerk_limits: null
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: true
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: 2.5
-      max_effort: .nan
-      max_jerk: .nan
+      has_velocity_limits: null
       max_position: null
-      max_velocity: 2.175
       min_position: null
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
     fr3_joint4:
-      angle_wraparound: false
-      has_acceleration_limits: true
-      has_deceleration_limits: false
-      has_effort_limits: false
+      has_acceleration_limits: null
       has_jerk_limits: null
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: true
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: 3.125
-      max_effort: .nan
-      max_jerk: .nan
+      has_velocity_limits: null
       max_position: null
-      max_velocity: 2.175
       min_position: null
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
     fr3_joint5:
-      angle_wraparound: false
-      has_acceleration_limits: true
-      has_deceleration_limits: false
-      has_effort_limits: false
+      has_acceleration_limits: null
       has_jerk_limits: null
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: true
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: 3.75
-      max_effort: .nan
-      max_jerk: .nan
+      has_velocity_limits: null
       max_position: null
-      max_velocity: 2.61
       min_position: null
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
     fr3_joint6:
-      angle_wraparound: false
-      has_acceleration_limits: true
-      has_deceleration_limits: false
-      has_effort_limits: false
+      has_acceleration_limits: null
       has_jerk_limits: null
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: true
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: 5.0
-      max_effort: .nan
-      max_jerk: .nan
+      has_velocity_limits: null
       max_position: null
-      max_velocity: 2.61
       min_position: null
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
     fr3_joint7:
-      angle_wraparound: false
-      has_acceleration_limits: true
-      has_deceleration_limits: false
-      has_effort_limits: false
-      has_jerk_limits: null
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: true
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: 5.0
-      max_effort: .nan
-      max_jerk: .nan
-      max_position: null
-      max_velocity: 2.61
-      min_position: null
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
-    virtual_joint:
-      angle_wraparound: false
-      has_acceleration_limits: false
-      has_deceleration_limits: false
-      has_effort_limits: false
-      has_jerk_limits: false
-      has_position_limits: false
-      has_soft_limits: false
-      has_velocity_limits: false
-      k_position: .nan
-      k_velocity: .nan
-      max_acceleration: .nan
-      max_effort: .nan
-      max_jerk: .nan
-      max_position: .nan
-      max_velocity: .nan
-      min_position: .nan
-      min_velocity: .nan
-      soft_lower_limit: .nan
-      soft_upper_limit: .nan
-    virtual_joint/rot_w:
       has_acceleration_limits: null
       has_jerk_limits: null
       has_velocity_limits: null
       max_position: null
       min_position: null
-    virtual_joint/rot_x:
-      has_acceleration_limits: null
-      has_jerk_limits: null
-      has_velocity_limits: null
-      max_position: null
-      min_position: null
-    virtual_joint/rot_y:
-      has_acceleration_limits: null
-      has_jerk_limits: null
-      has_velocity_limits: null
-      max_position: null
-      min_position: null
-    virtual_joint/rot_z:
-      has_acceleration_limits: null
-      has_jerk_limits: null
-      has_velocity_limits: null
-      max_position: null
-      min_position: null
-    virtual_joint/trans_x:
-      has_acceleration_limits: null
-      has_jerk_limits: null
-      has_velocity_limits: null
-      max_position: null
-      min_position: null
-    virtual_joint/trans_y:
-      has_acceleration_limits: null
-      has_jerk_limits: null
-      has_velocity_limits: null
-      max_position: null
-      min_position: null
-    virtual_joint/trans_z:
-      has_acceleration_limits: null
-      has_jerk_limits: null
-      has_velocity_limits: null
-      max_position: null
-      min_position: null
-robot_description_semantic: "<?xml version=\"1.0\" ?><!-- =================================================================================== --><!-- |    This document was autogenerated by xacro from /home/qpaig/ws_moveit2/install/moveit_resources_fr3_moveit_config/share/moveit_resources_fr3_moveit_config/config/fr3.srdf | --><!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | --><!-- =================================================================================== --><!-- =================================================================================== --><!-- |    This document was autogenerated by xacro from fr3_arm_hand.srdf.xacro      | --><!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | --><!-- =================================================================================== --><!--This does not replace URDF, and is not an extension of URDF.\n    This is a format for representing semantic information about the robot structure.\n    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined\n--><robot name=\"fr3\"><!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc--><!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included--><!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included--><!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group--><!--SUBGROUPS: Groups can also be formed by referencing to already defined group names--><group name=\"fr3_arm\"><chain base_link=\"fr3_link0\" tip_link=\"fr3_link8\"/></group><!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'--><group_state group=\"fr3_arm\" name=\"ready\"><joint name=\"fr3_joint1\" value=\"0\"/><joint name=\"fr3_joint2\" value=\"-0.785\"/><joint name=\"fr3_joint3\" value=\"0\"/><joint name=\"fr3_joint4\" value=\"-2.356\"/><joint name=\"fr3_joint5\" value=\"0\"/><joint name=\"fr3_joint6\" value=\"1.571\"/><joint name=\"fr3_joint7\" value=\"0.785\"/></group_state><group_state group=\"fr3_arm\" name=\"extended\"><joint name=\"fr3_joint1\" value=\"0\"/><joint name=\"fr3_joint2\" value=\"0\"/><joint name=\"fr3_joint3\" value=\"0\"/><joint name=\"fr3_joint4\" value=\"0\"/><joint name=\"fr3_joint5\" value=\"0\"/><joint name=\"fr3_joint6\" value=\"1.571\"/><joint name=\"fr3_joint7\" value=\"0.785\"/></group_state><group_state group=\"fr3_arm\" name=\"transport\"><joint name=\"fr3_joint1\" value=\"0\"/><joint name=\"fr3_joint2\" value=\"-0.5599\"/><joint name=\"fr3_joint3\" value=\"0\"/><joint name=\"fr3_joint4\" value=\"-2.97\"/><joint name=\"fr3_joint5\" value=\"0\"/><joint name=\"fr3_joint6\" value=\"0\"/><joint name=\"fr3_joint7\" value=\"0.785\"/></group_state><!--END EFFECTOR: Purpose: Represent information about an end effector.--><!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)--><virtual_joint child_link=\"fr3_link0\" name=\"virtual_joint\" parent_frame=\"world\" type=\"floating\"/><!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. --><disable_collisions link1=\"fr3_link0\" link2=\"fr3_link1\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_link0\" link2=\"fr3_link2\" reason=\"Never\"/><disable_collisions link1=\"fr3_link0\" link2=\"fr3_link3\" reason=\"Never\"/><disable_collisions link1=\"fr3_link0\" link2=\"fr3_link4\" reason=\"Never\"/><disable_collisions link1=\"fr3_link1\" link2=\"fr3_link2\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_link1\" link2=\"fr3_link3\" reason=\"Never\"/><disable_collisions link1=\"fr3_link1\" link2=\"fr3_link4\" reason=\"Never\"/><disable_collisions link1=\"fr3_link2\" link2=\"fr3_link3\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_link2\" link2=\"fr3_link4\" reason=\"Never\"/><disable_collisions link1=\"fr3_link2\" link2=\"fr3_link6\" reason=\"Never\"/><disable_collisions link1=\"fr3_link3\" link2=\"fr3_link4\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_link3\" link2=\"fr3_link5\" reason=\"Never\"/><disable_collisions link1=\"fr3_link3\" link2=\"fr3_link6\" reason=\"Never\"/><disable_collisions link1=\"fr3_link3\" link2=\"fr3_link7\" reason=\"Never\"/><disable_collisions link1=\"fr3_link4\" link2=\"fr3_link5\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_link4\" link2=\"fr3_link6\" reason=\"Never\"/><disable_collisions link1=\"fr3_link4\" link2=\"fr3_link7\" reason=\"Never\"/><disable_collisions link1=\"fr3_link5\" link2=\"fr3_link6\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_link6\" link2=\"fr3_link7\" reason=\"Adjacent\"/><!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc--><!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included--><!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included--><!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group--><!--SUBGROUPS: Groups can also be formed by referencing to already defined group names--><group name=\"hand\"><link name=\"fr3_hand\"/><link name=\"fr3_leftfinger\"/><link name=\"fr3_rightfinger\"/><joint name=\"fr3_finger_joint1\"/><passive_joint name=\"fr3_finger_joint2\"/></group><!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'--><!--END EFFECTOR: Purpose: Represent information about an end effector.--><!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. --><disable_collisions link1=\"fr3_hand\" link2=\"fr3_leftfinger\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_hand\" link2=\"fr3_rightfinger\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_rightfinger\" reason=\"Default\"/><!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc--><!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included--><!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included--><!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group--><!--SUBGROUPS: Groups can also be formed by referencing to already defined group names--><group name=\"fr3_arm_hand\"><group name=\"fr3_arm\"/><group name=\"hand\"/></group><group_state group=\"hand\" name=\"open\"><joint name=\"fr3_finger_joint1\" value=\"0.035\"/><joint name=\"fr3_finger_joint2\" value=\"0.035\"/></group_state><group_state group=\"hand\" name=\"close\"><joint name=\"fr3_finger_joint1\" value=\"0\"/><joint name=\"fr3_finger_joint2\" value=\"0\"/></group_state><!--END EFFECTOR: Purpose: Represent information about an end effector.--><end_effector group=\"hand\" name=\"hand\" parent_group=\"fr3_arm\" parent_link=\"fr3_link8\"/><!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. --><disable_collisions link1=\"fr3_hand\" link2=\"fr3_link3\" reason=\"Never\"/><disable_collisions link1=\"fr3_hand\" link2=\"fr3_link4\" reason=\"Never\"/><disable_collisions link1=\"fr3_hand\" link2=\"fr3_link6\" reason=\"Never\"/><disable_collisions link1=\"fr3_hand\" link2=\"fr3_link7\" reason=\"Adjacent\"/><disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link3\" reason=\"Never\"/><disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link4\" reason=\"Never\"/><disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link6\" reason=\"Never\"/><disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link7\" reason=\"Never\"/><disable_collisions link1=\"fr3_link3\" link2=\"fr3_rightfinger\" reason=\"Never\"/><disable_collisions link1=\"fr3_link4\" link2=\"fr3_rightfinger\" reason=\"Never\"/><disable_collisions link1=\"fr3_link6\" link2=\"fr3_rightfinger\" reason=\"Never\"/><disable_collisions link1=\"fr3_link7\" link2=\"fr3_rightfinger\" reason=\"Never\"/></robot>"
+robot_description_semantic: "<?xml version=\"1.0\" ?>\n<!-- =================================================================================== -->\n<!-- |    This document was autogenerated by xacro from /home/qpaig/franka_ros2_ws/install/franka_fr3_moveit_config/share/franka_fr3_moveit_config/srdf/fr3_arm.srdf.xacro | -->\n<!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->\n<!-- =================================================================================== -->\n<robot name=\"fr3\">\n  <!-- Should a franka_gripper be mounted at the flange? (Currently does not work without it) -->\n  <group name=\"fr3_manipulator\">\n    <chain base_link=\"fr3_link0\" tip_link=\"fr3_hand_tcp\"/>\n  </group>\n  <group_state group=\"fr3_manipulator\" name=\"ready\">\n    <joint name=\"fr3_joint1\" value=\"0\"/>\n    <joint name=\"fr3_joint2\" value=\"-0.7853981633974483\"/>\n    <joint name=\"fr3_joint3\" value=\"0\"/>\n    <joint name=\"fr3_joint4\" value=\"-2.356194490192345\"/>\n    <joint name=\"fr3_joint5\" value=\"0\"/>\n    <joint name=\"fr3_joint6\" value=\"1.5707963267948966\"/>\n    <joint name=\"fr3_joint7\" value=\"0.7853981633974483\"/>\n  </group_state>\n  <group_state group=\"fr3_manipulator\" name=\"extended\">\n    <joint name=\"fr3_joint1\" value=\"0\"/>\n    <joint name=\"fr3_joint2\" value=\"0\"/>\n    <joint name=\"fr3_joint3\" value=\"0\"/>\n    <joint name=\"fr3_joint4\" value=\"-0.1\"/>\n    <joint name=\"fr3_joint5\" value=\"0\"/>\n    <joint name=\"fr3_joint6\" value=\"1.5707963267948966\"/>\n    <joint name=\"fr3_joint7\" value=\"0.7853981633974483\"/>\n  </group_state>\n  <group name=\"fr3_arm\">\n    <chain base_link=\"fr3_link0\" tip_link=\"fr3_link8\"/>\n  </group>\n  <group_state group=\"fr3_arm\" name=\"ready\">\n    <joint name=\"fr3_joint1\" value=\"0\"/>\n    <joint name=\"fr3_joint2\" value=\"-0.7853981633974483\"/>\n    <joint name=\"fr3_joint3\" value=\"0\"/>\n    <joint name=\"fr3_joint4\" value=\"-2.356194490192345\"/>\n    <joint name=\"fr3_joint5\" value=\"0\"/>\n    <joint name=\"fr3_joint6\" value=\"1.5707963267948966\"/>\n    <joint name=\"fr3_joint7\" value=\"0.7853981633974483\"/>\n  </group_state>\n  <group_state group=\"fr3_arm\" name=\"extended\">\n    <joint name=\"fr3_joint1\" value=\"0\"/>\n    <joint name=\"fr3_joint2\" value=\"0\"/>\n    <joint name=\"fr3_joint3\" value=\"0\"/>\n    <joint name=\"fr3_joint4\" value=\"-0.1\"/>\n    <joint name=\"fr3_joint5\" value=\"0\"/>\n    <joint name=\"fr3_joint6\" value=\"1.5707963267948966\"/>\n    <joint name=\"fr3_joint7\" value=\"0.7853981633974483\"/>\n  </group_state>\n  <virtual_joint child_link=\"fr3_link0\" name=\"virtual_joint\" parent_frame=\"world\" type=\"fixed\"/>\n  <disable_collisions link1=\"fr3_link0\" link2=\"fr3_link1\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_link0\" link2=\"fr3_link2\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link0\" link2=\"fr3_link3\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link0\" link2=\"fr3_link4\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link1\" link2=\"fr3_link2\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_link1\" link2=\"fr3_link3\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link1\" link2=\"fr3_link4\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link2\" link2=\"fr3_link3\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_link2\" link2=\"fr3_link4\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link2\" link2=\"fr3_link6\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link3\" link2=\"fr3_link4\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_link3\" link2=\"fr3_link5\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link3\" link2=\"fr3_link6\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link3\" link2=\"fr3_link7\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link4\" link2=\"fr3_link5\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_link4\" link2=\"fr3_link6\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link4\" link2=\"fr3_link7\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link4\" link2=\"fr3_link8\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link5\" link2=\"fr3_link6\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_link6\" link2=\"fr3_link7\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_link6\" link2=\"fr3_link8\" reason=\"Default\"/>\n  <disable_collisions link1=\"fr3_link7\" link2=\"fr3_link8\" reason=\"Adjacent\"/>\n  <group name=\"hand\">\n    <link name=\"fr3_hand\"/>\n    <link name=\"fr3_leftfinger\"/>\n    <link name=\"fr3_rightfinger\"/>\n    <joint name=\"fr3_finger_joint1\"/>\n    <passive_joint name=\"fr3_finger_joint2\"/>\n  </group>\n  <disable_collisions link1=\"fr3_hand\" link2=\"fr3_leftfinger\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_hand\" link2=\"fr3_rightfinger\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_rightfinger\" reason=\"Default\"/>\n  <group_state group=\"hand\" name=\"open\">\n    <joint name=\"fr3_finger_joint1\" value=\"0.035\"/>\n    <joint name=\"fr3_finger_joint2\" value=\"0.035\"/>\n  </group_state>\n  <group_state group=\"hand\" name=\"close\">\n    <joint name=\"fr3_finger_joint1\" value=\"0\"/>\n    <joint name=\"fr3_finger_joint2\" value=\"0\"/>\n  </group_state>\n  <end_effector group=\"hand\" name=\"hand_tcp\" parent_group=\"fr3_manipulator\" parent_link=\"fr3_hand_tcp\"/>\n  <end_effector group=\"hand\" name=\"hand\" parent_group=\"fr3_arm\" parent_link=\"fr3_link8\"/>\n  <disable_collisions link1=\"fr3_hand\" link2=\"fr3_link3\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_hand\" link2=\"fr3_link4\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_hand\" link2=\"fr3_link6\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_hand\" link2=\"fr3_link7\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_hand\" link2=\"fr3_link8\" reason=\"Adjacent\"/>\n  <disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link3\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link4\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link6\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link7\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_leftfinger\" link2=\"fr3_link8\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link3\" link2=\"fr3_rightfinger\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link4\" link2=\"fr3_rightfinger\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link6\" link2=\"fr3_rightfinger\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link7\" link2=\"fr3_rightfinger\" reason=\"Never\"/>\n  <disable_collisions link1=\"fr3_link8\" link2=\"fr3_rightfinger\" reason=\"Never\"/>\n</robot>\n"
 trajectory_execution:
   allowed_execution_duration_scaling: 1.2
   allowed_goal_duration_margin: 0.5
