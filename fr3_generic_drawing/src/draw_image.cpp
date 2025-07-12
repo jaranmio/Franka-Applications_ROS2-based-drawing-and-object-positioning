@@ -17,8 +17,8 @@
 #include <stack>
 
 const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/image.png";
-const double CONVERSION_FACTOR = 0.0001257 * 4.5;
-const double DRAWING_HEIGHT = 0.208;
+const double CONVERSION_FACTOR = 0.0001257;
+const double DRAWING_HEIGHT = 0.175;
 // 0.182c Paris Conte Charcoal add groundplate
 // 0.132 - creata color monolith HB
 // 0.16 (approx. not working) - carbon sketch
@@ -110,17 +110,26 @@ void dfsTrace(const cv::Mat &binary, cv::Point pt, std::vector<cv::Point> &conto
     const int dx[] = {-1, 0, 1, -1, 1, -1, 0, 1};
     const int dy[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 
+    std::stack<cv::Point> stack;
+    stack.push(pt);
     visited.at<uchar>(pt) = 1;
-    contour.push_back(pt);
 
-    for (int k = 0; k < 8; ++k)
+    while (!stack.empty())
     {
-        cv::Point np(pt.x + dx[k], pt.y + dy[k]);
-        if (np.x < 0 || np.y < 0 || np.x >= binary.cols || np.y >= binary.rows)
-            continue;
-        if (binary.at<uchar>(np) == 255 && visited.at<uchar>(np) == 0)
+        cv::Point current = stack.top();
+        stack.pop();
+        contour.push_back(current);
+
+        for (int k = 0; k < 8; ++k)
         {
-            dfsTrace(binary, np, contour, visited);
+            cv::Point np(current.x + dx[k], current.y + dy[k]);
+            if (np.x < 0 || np.y < 0 || np.x >= binary.cols || np.y >= binary.rows)
+                continue;
+            if (binary.at<uchar>(np) == 255 && visited.at<uchar>(np) == 0)
+            {
+                stack.push(np);
+                visited.at<uchar>(np) = 1;  // Mark before pushing to avoid re-visits
+            }
         }
     }
 }
@@ -271,7 +280,7 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
     rclcpp::NodeOptions node_options;
     node_options.automatically_declare_parameters_from_overrides(true);
-    auto node = rclcpp::Node::make_shared("fr3_sketch_node", node_options);
+    rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("fr3_sketch_node", node_options);
 
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(node);
@@ -319,6 +328,7 @@ int main(int argc, char **argv)
             converted.push_back(cv::Point(cvRound(pt.x), cvRound(pt.y)));
         contoursToDraw.push_back(converted);
     }
+
 
     cv::Mat savedImage = cv::Mat(binary.size(), binary.type(), cv::Scalar(255, 255, 255));
     cv::drawContours(savedImage, contoursToDraw, -1, cv::Scalar(0, 255, 0), 1);

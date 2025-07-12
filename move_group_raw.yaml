@@ -628,8 +628,8 @@
       \ link1=\"fr3_link7\" link2=\"fr3_rightfinger\" reason=\"Never\"/>\n  <disable_collisions\
       \ link1=\"fr3_link8\" link2=\"fr3_rightfinger\" reason=\"Never\"/>\n</robot>\n"
     trajectory_execution:
-      allowed_execution_duration_scaling: 1.2
-      allowed_goal_duration_margin: 0.5
+      allowed_execution_duration_scaling: 1.7
+      allowed_goal_duration_margin: 1.0
       allowed_start_tolerance: 0.01
     use_sim_time: false
 
