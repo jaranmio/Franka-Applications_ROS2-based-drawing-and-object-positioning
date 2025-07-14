@@ -17,8 +17,9 @@
 #include <stack>
 
 const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/image.png";
-const double CONVERSION_FACTOR = 0.0001257;
-const double DRAWING_HEIGHT = 0.175;
+const double CONVERSION_FACTOR = 0.0001257*3.3;
+const double DRAWING_HEIGHT = 0.203;
+// 0.154 PRANG peel off HB
 // 0.182c Paris Conte Charcoal add groundplate
 // 0.132 - creata color monolith HB
 // 0.16 (approx. not working) - carbon sketch

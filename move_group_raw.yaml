@@ -1,5 +1,6 @@
 /move_group:
   ros__parameters:
+    capabilities: move_group/ExecuteTaskSolutionCapability
     default_planning_pipeline: move_group
     fr3_arm:
       kinematics_solver: lma_kinematics_plugin/LMAKinematicsPlugin
@@ -213,10 +214,12 @@
         type: FollowJointTrajectory
       fr3_gripper:
         action_ns: gripper_action
+        allow_failure: true
         default: true
         joints:
         - fr3_finger_joint1
         - fr3_finger_joint2
+        max_effort: 20.0
         type: GripperCommand
     publish_geometry_updates: true
     publish_planning_scene: true

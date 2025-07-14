@@ -1,0 +1,22 @@
+# full name (with extension) of the image to be drawn
+image_file: image.png
+
+# desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
+pen_elevation: 21.0
+
+# width of the paper on which the drawing is made
+paper_width: 50.0
+
+# height of the paper on which the drawing is made
+paper_height: 50.0
+
+# desired size of the drawing, in cm, as a percentage. For example, 80 = 80%
+size: 80
+
+# position of the center of the image, in cm, along x (left / right) with respect to the arm's base
+# increasing this values moves the center of the image towards the left
+image_center_x: 49
+
+# position of the center of the image, in cm, along y (up / down) with respect to the arm's base
+# increasing this values moves the center of the image towards the bottom
+image_center_y: 0
