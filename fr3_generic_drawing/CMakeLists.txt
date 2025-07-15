@@ -11,12 +11,13 @@ find_package(rclcpp REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
+find_package(yaml_cpp_vendor REQUIRED)
 
 add_executable(draw_image src/draw_image.cpp)
-ament_target_dependencies(draw_image rclcpp OpenCV moveit_ros_planning_interface geometry_msgs visualization_msgs tf2_ros)
+ament_target_dependencies(draw_image rclcpp OpenCV moveit_ros_planning_interface geometry_msgs visualization_msgs tf2_ros yaml_cpp_vendor)
 
 add_executable(draw_image_vector src/draw_image_vector.cpp)
-ament_target_dependencies(draw_image_vector rclcpp OpenCV moveit_ros_planning_interface geometry_msgs visualization_msgs tf2_ros)
+ament_target_dependencies(draw_image_vector rclcpp OpenCV moveit_ros_planning_interface geometry_msgs visualization_msgs tf2_ros yaml_cpp_vendor)
 
 install(TARGETS
   draw_image

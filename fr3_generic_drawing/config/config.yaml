@@ -1,17 +1,17 @@
 # full name (with extension) of the image to be drawn
-image_file: image.png
+image_file: star_outline.jpg
 
 # desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
-pen_elevation: 21.0
+pen_elevation: 4.0 # 21
 
 # width of the paper on which the drawing is made
 paper_width: 50.0
 
 # height of the paper on which the drawing is made
-paper_height: 50.0
+paper_length: 50.0
 
-# desired size of the drawing, in cm, as a percentage. For example, 80 = 80%
-size: 80
+# desired coverage of the drawing, in cm, as a percentage. For example, 80 = cover 80% of the paper
+coverage: 80
 
 # position of the center of the image, in cm, along x (left / right) with respect to the arm's base
 # increasing this values moves the center of the image towards the left

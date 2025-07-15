@@ -56,7 +56,7 @@ class GripperCommandProxy(Node):
 
         simulate = self.get_parameter('simulate').get_parameter_value().bool_value
 
-        if simulate:
+        if simulate or abs(position - 0.035) < 0.00001: # also forward to gripper_action when opening
             # Simulate = true → Forward original GripperCommand
             self.get_logger().info('Simulate=True → Forwarding to /fr3_gripper/gripper_action')
 

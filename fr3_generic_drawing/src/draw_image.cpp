@@ -15,10 +15,22 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/core.hpp>
 #include <stack>
+#include <yaml-cpp/yaml.h>
+#include <cmath>
+#include <algorithm>
 
-const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/image.png";
-const double CONVERSION_FACTOR = 0.0001257*3.3;
-const double DRAWING_HEIGHT = 0.203;
+YAML::Node config = YAML::LoadFile("/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/config/config.yaml");
+std::string image_file = config["image_file"].as<std::string>();
+double percent_coverage = config["coverage"].as<double>(); // as a percentage
+double pen_elevation = config["pen_elevation"].as<double>() * std::pow(10, -2.0); // to m
+double paper_length = 0.9 * config["paper_length"].as<double>() * std::pow(10, -2.0); // along x, converted to m; limited to 90% of full width for safety.
+double paper_width = 0.9 * config["paper_width"].as<double>() * std::pow(10, -2.0); // along y, converted to m; limited to 90% of full width for safety.
+double center_x = config["image_center_x"].as<double>() * std::pow(10, -2.0); // to m
+double center_y = config["image_center_y"].as<double>() * std::pow(10, -2.0); // to m
+
+const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/config/images/" + image_file;
+double CONVERSION_FACTOR;
+const double DRAWING_HEIGHT = pen_elevation;
 // 0.154 PRANG peel off HB
 // 0.182c Paris Conte Charcoal add groundplate
 // 0.132 - creata color monolith HB
@@ -26,8 +38,8 @@ const double DRAWING_HEIGHT = 0.203;
 const double Z_PENCIL_DOWN = DRAWING_HEIGHT;
 const double RAISING_AMOUNT = 0.05;
 const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
-const double X_ORIGIN = 0.49;
-const double Y_ORIGIN = 0.0;
+const double X_ORIGIN = center_x;
+const double Y_ORIGIN = center_y;
 const int SEGMENT_SIZE = 10;
 
 template <typename T>
@@ -290,11 +302,11 @@ int main(int argc, char **argv)
         .detach();
 
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
-    mg.startStateMonitor();
+    // mg.startStateMonitor();
     mg.setPlanningTime(10);
     mg.setMaxVelocityScalingFactor(0.3);
     mg.setPoseReferenceFrame("fr3_link0");
-    mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8'
+    mg.setEndEffectorLink("pencil_tip"); // default is 'fr3_link8' fr3_hand_tcp
     // Constrain pencil to point down
     moveit_msgs::msg::OrientationConstraint oc;
     oc.link_name = mg.getEndEffectorLink();
@@ -309,6 +321,28 @@ int main(int argc, char **argv)
     mg.setPathConstraints(pc);
 
     cv::Mat img = cv::imread(IMAGE_PATH, cv::IMREAD_GRAYSCALE);
+
+    // find conversion factor that maximizes area coverage
+    const double image_width_px = img.rows;
+    const double image_length_px = img.cols;
+    const double image_aspect_ratio = image_length_px / image_width_px;
+    
+    const double paper_aspect_ratio = paper_length / paper_width;
+
+    double limiting_image_dimension;
+    double limiting_paper_dimension;
+    
+    if ((paper_aspect_ratio > 1 && image_aspect_ratio > 1) || (paper_aspect_ratio < 1 && image_aspect_ratio < 1)) {
+        // same aspect ratio
+        limiting_paper_dimension = std::min(paper_width, paper_length);
+        limiting_image_dimension = std::min(paper_width, paper_length);
+    } else{
+        limiting_paper_dimension = std::min(paper_width, paper_length);
+        limiting_image_dimension = std::max(paper_width, paper_length);
+    }
+
+    CONVERSION_FACTOR = limiting_paper_dimension / limiting_image_dimension;
+    CONVERSION_FACTOR *= std::sqrt(percent_coverage / 100);
 
     cv::Mat binary;
     cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
@@ -356,7 +390,6 @@ int main(int argc, char **argv)
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
         {
-
             size_t end = std::min(i + SEGMENT_SIZE, stroke.size());
             std::vector<geometry_msgs::msg::Pose> segment;
             for (size_t j = i; j < end; ++j)

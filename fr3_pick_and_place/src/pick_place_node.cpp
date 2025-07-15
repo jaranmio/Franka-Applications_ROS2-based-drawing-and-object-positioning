@@ -69,7 +69,7 @@ void MTCTaskNode::setupPlanningScene()
   cube.pose.orientation.w = 1.0;
   cube.pose.position.x = 0.50;
   cube.pose.position.y = -0.25;
-  cube.pose.position.z = 0.1 / 2.0;  
+  cube.pose.position.z = 0.1 / 2.0;
 
   moveit::planning_interface::PlanningSceneInterface psi;
   psi.applyCollisionObject(cube);
