@@ -19,22 +19,39 @@
 #include <string>
 #include <rclcpp/executors/multi_threaded_executor.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
+#include <yaml-cpp/yaml.h>
+#include <cmath>
+#include <algorithm>
+#include <chrono>
 
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
 
-const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/star.svg";
-const double CONVERSION_FACTOR = 0.0001257 * 1.0;
-const double DRAWING_HEIGHT = 0.201;
+YAML::Node config = YAML::LoadFile("/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/vector_config/config.yaml");
+std::string image_file = config["image_file"].as<std::string>();
+double percent_coverage = config["coverage"].as<double>(); // as a percentage
+double height_rate = (config["height_rate"].as<double>() * std::pow(10, -2.0)) / 2; // to m per 0.5 hour
+double pen_height = config["pen_height"].as<double>() * std::pow(10, -2.0); // to m
+double paper_length = config["paper_length"].as<double>() * std::pow(10, -2.0); // along x, converted to m
+double paper_width = config["paper_width"].as<double>() * std::pow(10, -2.0); // along y, converted to m
+double center_x = config["image_center_x"].as<double>() * std::pow(10, -2.0); // to m
+double center_y = config["image_center_y"].as<double>() * std::pow(10, -2.0); // to m
+
+const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/vector_config/images/" + image_file;
+double CONVERSION_FACTOR;
+double DRAWING_HEIGHT = pen_height;
 // 0.190 Conte a Paris Sanguine maybe add 1cm on measured length
+// 0.154 PRANG peel off HB
+// 0.182c Paris Conte Charcoal add groundplate
 // 0.132 - creata color monolith HB
 // 0.16 (approx. not working) - carbon sketch
 const double Z_PENCIL_DOWN = DRAWING_HEIGHT;
 const double RAISING_AMOUNT = 0.05;
 const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
-const double X_ORIGIN = 0.49;
-const double Y_ORIGIN = 0.0;
+const double X_ORIGIN = center_x;
+const double Y_ORIGIN = center_y;
 const int SEGMENT_SIZE = 10;
+const double SECS_PER_HALF_HOUR = 30 * 60;
 
 struct Point
 {
@@ -191,15 +208,41 @@ int main(int argc, char **argv)
         rclcpp::shutdown();
         return 1;
     }
-    float width = image->width;
-    float height = image->height;
+    float width = image->height; // inversion is intentional, just for logic of calculating conversion factor
+    float length = image->width;
+
+    // find conversion factor that maximizes area coverage
+    const double image_aspect_ratio = length / width;
+    
+    const double paper_aspect_ratio = paper_length / paper_width;
+
+    double limiting_image_dimension;
+    double limiting_paper_dimension;
+    
+    if ((paper_aspect_ratio > 1 && image_aspect_ratio > 1) || (paper_aspect_ratio < 1 && image_aspect_ratio < 1)) {
+        // same aspect ratio
+        limiting_paper_dimension = std::min(paper_width, paper_length);
+        limiting_image_dimension = std::min(width, length);
+    } else{
+        limiting_paper_dimension = std::min(paper_width, paper_length);
+        limiting_image_dimension = std::max(width, length);
+    }
+
+    CONVERSION_FACTOR = limiting_paper_dimension / limiting_image_dimension;
+    CONVERSION_FACTOR *= std::sqrt(percent_coverage / 100);
+    RCLCPP_INFO(node->get_logger(), ("CONVERSION FACTOR: " + std::to_string(CONVERSION_FACTOR)).c_str());
+
     auto contours = extract_svg_paths(image);
+
+    auto START = std::chrono::high_resolution_clock::now(); // start clock
+    double half_hours_tracking = 0; // variable to make sure we reduce exactly once per half hour
+
     for (const auto &stroke : contours)
     {
         if (stroke.size() < 2)
             continue;
 
-        auto start_lifted = image_to_pose(stroke.front().x, stroke.front().y, width, height, Z_PENCIL_RAISED);
+        auto start_lifted = image_to_pose(stroke.front().x, stroke.front().y, image->width, image->height, Z_PENCIL_RAISED);
         std::vector<geometry_msgs::msg::Pose> lift_start_path = {mg.getCurrentPose().pose, start_lifted};
         moveit_msgs::msg::RobotTrajectory lift_start_traj;
         if (mg.computeCartesianPath(lift_start_path, 0.01, 0.0, lift_start_traj) >= 0.95)
@@ -211,13 +254,24 @@ int main(int argc, char **argv)
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
         {
+            auto NOW = std::chrono::high_resolution_clock::now();
+            const double ELAPSED_TIME_SECS = (NOW - START).count();
+            const double HALF_HOURS_ELASPED = std::floor(ELAPSED_TIME_SECS / SECS_PER_HALF_HOUR);
+            
+            if (HALF_HOURS_ELASPED < half_hours_tracking) { // reduce height only once per half hour
+                const double HEIGHT_ADJUSTMENT = HALF_HOURS_ELASPED * height_rate;
+                DRAWING_HEIGHT -= HEIGHT_ADJUSTMENT;
+                RCLCPP_INFO(node->get_logger(), ("NEW HEIGHT SET: " + std::to_string(DRAWING_HEIGHT) + "m").c_str());
+                half_hours_tracking++;
+            }
+
             size_t end_index = std::min(i + SEGMENT_SIZE, stroke.size());
             std::vector<geometry_msgs::msg::Pose> segment;
             for (size_t j = i; j < end_index; ++j)
             {
-                int x = clamp(static_cast<int>(stroke[j].x), 0, static_cast<int>(width) - 1);
-                int y = clamp(static_cast<int>(stroke[j].y), 0, static_cast<int>(height) - 1);
-                segment.push_back(image_to_pose(x, y, width, height, Z_PENCIL_DOWN));
+                int x = clamp(static_cast<int>(stroke[j].x), 0, static_cast<int>(image->width) - 1);
+                int y = clamp(static_cast<int>(stroke[j].y), 0, static_cast<int>(image->height) - 1);
+                segment.push_back(image_to_pose(x, y, image->width, image->height, Z_PENCIL_DOWN));
             }
             if (segment.size() < 2)
                 continue;
@@ -237,7 +291,7 @@ int main(int argc, char **argv)
             }
         }
 
-        auto end_lifted = image_to_pose(stroke.back().x, stroke.back().y, width, height, Z_PENCIL_RAISED);
+        auto end_lifted = image_to_pose(stroke.back().x, stroke.back().y, image->width, image->height, Z_PENCIL_RAISED);
         std::vector<geometry_msgs::msg::Pose> lift_end_path = {mg.getCurrentPose().pose, end_lifted};
         moveit_msgs::msg::RobotTrajectory lift_end_traj;
         if (mg.computeCartesianPath(lift_end_path, 0.01, 0.0, lift_end_traj) >= 0.95)
@@ -247,6 +301,12 @@ int main(int argc, char **argv)
             mg.execute(plan);
         }
     }
+
+    auto NOW = std::chrono::high_resolution_clock::now();
+    const double ELAPSED_TIME_SECS = (NOW - START).count();
+
+    RCLCPP_INFO(node->get_logger(), ("TOTAL DRAWING TIME: " + std::to_string(ELAPSED_TIME_SECS) + "secs").c_str());
+    
     rclcpp::shutdown();
 
     return 0;

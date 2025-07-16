@@ -20,7 +20,7 @@
 #include <algorithm>
 #include <chrono>
 
-YAML::Node config = YAML::LoadFile("/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/config/config.yaml");
+YAML::Node config = YAML::LoadFile("/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/raster_config/config.yaml");
 std::string image_file = config["image_file"].as<std::string>();
 double percent_coverage = config["coverage"].as<double>(); // as a percentage
 double height_rate = (config["height_rate"].as<double>() * std::pow(10, -2.0)) / 2; // to m per 0.5 hour
@@ -30,7 +30,7 @@ double paper_width = config["paper_width"].as<double>() * std::pow(10, -2.0); //
 double center_x = config["image_center_x"].as<double>() * std::pow(10, -2.0); // to m
 double center_y = config["image_center_y"].as<double>() * std::pow(10, -2.0); // to m
 
-const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/config/images/" + image_file;
+const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/raster_config/images/" + image_file;
 double CONVERSION_FACTOR;
 double DRAWING_HEIGHT = pen_height;
 // 0.154 PRANG peel off HB
@@ -309,7 +309,7 @@ int main(int argc, char **argv)
     mg.setPlanningTime(10);
     mg.setMaxVelocityScalingFactor(0.3);
     mg.setPoseReferenceFrame("fr3_link0");
-    mg.setEndEffectorLink("pencil_tip"); // default is 'fr3_link8' fr3_hand_tcp
+    mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
     // Constrain pencil to point down
     moveit_msgs::msg::OrientationConstraint oc;
     oc.link_name = mg.getEndEffectorLink();
