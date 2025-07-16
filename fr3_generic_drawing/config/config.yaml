@@ -1,22 +1,31 @@
 # full name (with extension) of the image to be drawn
-image_file: star_outline.jpg
+image_file: image (7).png
 
 # desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
-pen_elevation: 4.0 # 21
+pen_height: 4.0
 
-# width of the paper on which the drawing is made
+# width of the paper on which the drawing is made, in cm
 paper_width: 50.0
 
-# height of the paper on which the drawing is made
+# height of the paper on which the drawing is made, in cm
 paper_length: 50.0
 
-# desired coverage of the drawing, in cm, as a percentage. For example, 80 = cover 80% of the paper
+# desired coverage of the drawing, as a percentage. For example, 80 = cover 80% of the paper
 coverage: 80
 
-# position of the center of the image, in cm, along x (left / right) with respect to the arm's base
-# increasing this values moves the center of the image towards the left
+# the rate at which the height of the pen is reduced in cm/hour. For example 0.2 = decrease height by 0.2cm (or 2mm) every hour
+height_rate: 0.0
+
+# vertical position of the center of the image (up / down), in cm, with respect to the arm's base
+# increasing this values moves the center of the image up the paper
 image_center_x: 49
 
-# position of the center of the image, in cm, along y (up / down) with respect to the arm's base
-# increasing this values moves the center of the image towards the bottom
+# horizontal position of the center of the image (left / right), in cm, with respect to the arm's base
+# increasing this values moves the center of the image towards the left of the paper
 image_center_y: 0
+
+# Saved values for pen height
+# 0.154 PRANG peel off HB
+# 0.182c Paris Conte Charcoal add groundplate
+# 0.132 - creata color monolith HB
+# 0.16 (approx. not working) - carbon sketch

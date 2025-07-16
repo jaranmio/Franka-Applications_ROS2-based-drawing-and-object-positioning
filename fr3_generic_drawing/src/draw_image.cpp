@@ -18,19 +18,21 @@
 #include <yaml-cpp/yaml.h>
 #include <cmath>
 #include <algorithm>
+#include <chrono>
 
 YAML::Node config = YAML::LoadFile("/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/config/config.yaml");
 std::string image_file = config["image_file"].as<std::string>();
 double percent_coverage = config["coverage"].as<double>(); // as a percentage
-double pen_elevation = config["pen_elevation"].as<double>() * std::pow(10, -2.0); // to m
-double paper_length = 0.9 * config["paper_length"].as<double>() * std::pow(10, -2.0); // along x, converted to m; limited to 90% of full width for safety.
-double paper_width = 0.9 * config["paper_width"].as<double>() * std::pow(10, -2.0); // along y, converted to m; limited to 90% of full width for safety.
+double height_rate = (config["height_rate"].as<double>() * std::pow(10, -2.0)) / 2; // to m per 0.5 hour
+double pen_height = config["pen_height"].as<double>() * std::pow(10, -2.0); // to m
+double paper_length = config["paper_length"].as<double>() * std::pow(10, -2.0); // along x, converted to m
+double paper_width = config["paper_width"].as<double>() * std::pow(10, -2.0); // along y, converted to m
 double center_x = config["image_center_x"].as<double>() * std::pow(10, -2.0); // to m
 double center_y = config["image_center_y"].as<double>() * std::pow(10, -2.0); // to m
 
 const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/config/images/" + image_file;
 double CONVERSION_FACTOR;
-const double DRAWING_HEIGHT = pen_elevation;
+double DRAWING_HEIGHT = pen_height;
 // 0.154 PRANG peel off HB
 // 0.182c Paris Conte Charcoal add groundplate
 // 0.132 - creata color monolith HB
@@ -41,6 +43,7 @@ const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
 const double X_ORIGIN = center_x;
 const double Y_ORIGIN = center_y;
 const int SEGMENT_SIZE = 10;
+const double SECS_PER_HALF_HOUR = 30 * 60;
 
 template <typename T>
 T clamp(T val, T low, T high)
@@ -302,7 +305,7 @@ int main(int argc, char **argv)
         .detach();
 
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
-    // mg.startStateMonitor();
+    mg.startStateMonitor();
     mg.setPlanningTime(10);
     mg.setMaxVelocityScalingFactor(0.3);
     mg.setPoseReferenceFrame("fr3_link0");
@@ -335,14 +338,16 @@ int main(int argc, char **argv)
     if ((paper_aspect_ratio > 1 && image_aspect_ratio > 1) || (paper_aspect_ratio < 1 && image_aspect_ratio < 1)) {
         // same aspect ratio
         limiting_paper_dimension = std::min(paper_width, paper_length);
-        limiting_image_dimension = std::min(paper_width, paper_length);
+        limiting_image_dimension = std::min(image_width_px, image_length_px);
     } else{
         limiting_paper_dimension = std::min(paper_width, paper_length);
-        limiting_image_dimension = std::max(paper_width, paper_length);
+        limiting_image_dimension = std::max(image_width_px, image_length_px);
     }
 
     CONVERSION_FACTOR = limiting_paper_dimension / limiting_image_dimension;
     CONVERSION_FACTOR *= std::sqrt(percent_coverage / 100);
+    RCLCPP_INFO(node->get_logger(), ("CONVERSION FACTOR: " + std::to_string(CONVERSION_FACTOR)).c_str());
+    
 
     cv::Mat binary;
     cv::threshold(img, binary, 128, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
@@ -370,6 +375,9 @@ int main(int argc, char **argv)
     auto saveDir = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/contours.png";
     cv::imwrite(saveDir, savedImage);
 
+    auto START = std::chrono::high_resolution_clock::now(); // start clock
+    double half_hours_tracking = 0; // variable to make sure we reduce exactly once per half hour
+
     for (const auto &stroke : contoursFinal)
     {
 
@@ -390,6 +398,17 @@ int main(int argc, char **argv)
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
         {
+            auto NOW = std::chrono::high_resolution_clock::now();
+            const double ELAPSED_TIME_SECS = (NOW - START).count();
+            const double HALF_HOURS_ELASPED = std::floor(ELAPSED_TIME_SECS / SECS_PER_HALF_HOUR);
+            
+            if (HALF_HOURS_ELASPED < half_hours_tracking) { // reduce height only once per half hour
+                const double HEIGHT_ADJUSTMENT = HALF_HOURS_ELASPED * height_rate;
+                DRAWING_HEIGHT -= HEIGHT_ADJUSTMENT;
+                RCLCPP_INFO(node->get_logger(), ("NEW HEIGHT SET: " + std::to_string(DRAWING_HEIGHT) + "m").c_str());
+                half_hours_tracking++;
+            }
+
             size_t end = std::min(i + SEGMENT_SIZE, stroke.size());
             std::vector<geometry_msgs::msg::Pose> segment;
             for (size_t j = i; j < end; ++j)
@@ -435,6 +454,12 @@ int main(int argc, char **argv)
             mg.execute(plan);
         }
     }
+
+    auto NOW = std::chrono::high_resolution_clock::now();
+    const double ELAPSED_TIME_SECS = (NOW - START).count();
+
+    RCLCPP_INFO(node->get_logger(), ("TOTAL DRAWING TIME: " + std::to_string(ELAPSED_TIME_SECS) + "secs").c_str());
+
     rclcpp::shutdown();
 
     return 0;
