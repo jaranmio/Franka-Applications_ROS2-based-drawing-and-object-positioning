@@ -103,9 +103,9 @@ void MTCTaskNode::doTask()
 
   task_.introspection().publishSolution(*task_.solutions().front());
 
-  // Enable real grasp action ofr execution. Simulated by default
-  rclcpp::Parameter simulate_param("simulate", false);
-  node_->set_parameter(simulate_param);
+  // Enable real grasp action for execution. Planning state by default
+  rclcpp::Parameter planning_param("planning", false);
+  node_->set_parameter(planning_param);
 
   auto result = task_.execute(*task_.solutions().front());
   if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)

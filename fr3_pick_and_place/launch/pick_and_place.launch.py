@@ -61,7 +61,7 @@ def generate_launch_description():
             # "robot_description": os.environ.get("ROBOT_DESCRIPTION", ""),
             # "robot_description_semantic": os.environ.get("ROBOT_DESCRIPTION_SEMANTIC", ""),
             "use_sim_time": True,
-            'simulate': True
+            'planning': True
         }],
     )
 

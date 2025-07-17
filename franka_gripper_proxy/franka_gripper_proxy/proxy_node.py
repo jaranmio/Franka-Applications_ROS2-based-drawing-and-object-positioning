@@ -11,9 +11,9 @@ class GripperCommandProxy(Node):
     def __init__(self):
         super().__init__('gripper_command_proxy')
 
-        # Declare the 'simulate' parameter — TRUE means forward to original GripperCommand
+        # Declare the 'planning' parameter — TRUE means forward to original GripperCommand
         # same default value as in pick place node launch
-        self.declare_parameter('simulate', True)
+        self.declare_parameter('planning', True)
 
         self._parameter_event_sub = self.create_subscription(
             ParameterEvent,
@@ -40,11 +40,11 @@ class GripperCommandProxy(Node):
 
     def _on_parameter_event(self, event):
         for changed_param in event.changed_parameters:
-            if changed_param.name == 'simulate' and event.node == '/pick_place_node':
+            if changed_param.name == 'planning' and event.node == '/pick_place_node':
                 value = changed_param.value.bool_value
-                self.get_logger().info(f"Mirroring 'simulate' param: {value}")
+                self.get_logger().info(f"Mirroring 'planning' param: {value}")
                 self.set_parameters([rclpy.parameter.Parameter(
-                    'simulate',
+                    'planning',
                     rclpy.Parameter.Type.BOOL,
                     value
                 )])
@@ -54,11 +54,11 @@ class GripperCommandProxy(Node):
         effort = goal_handle.request.command.max_effort
         self.get_logger().info(f'Received GripperCommand goal: pos={position:.3f}, effort={effort:.1f}')
 
-        simulate = self.get_parameter('simulate').get_parameter_value().bool_value
+        planning = self.get_parameter('planning').get_parameter_value().bool_value
 
-        if simulate or abs(position - 0.035) < 0.00001: # also forward to gripper_action when opening
-            # Simulate = true → Forward original GripperCommand
-            self.get_logger().info('Simulate=True → Forwarding to /fr3_gripper/gripper_action')
+        if planning or abs(position - 0.035) < 0.00001: # also forward to gripper_action when opening
+            # planning = true or open gripper command → Forward original GripperCommand
+            self.get_logger().info('planning=True → Forwarding to /fr3_gripper/gripper_action')
 
             if not self._sim_gripper_client.wait_for_server(timeout_sec=2.0):
                 self.get_logger().error('Simulated gripper action server not available.')
@@ -85,8 +85,8 @@ class GripperCommandProxy(Node):
             return GripperCommand.Result()
 
         else:
-            # Simulate = false → Send Franka Grasp action
-            self.get_logger().info('Simulate=False → Forwarding to /fr3_gripper/grasp')
+            # planning = false → Send Franka Grasp action
+            self.get_logger().info('planning=False → Forwarding to /fr3_gripper/grasp')
 
             if not self._grasp_client.wait_for_server(timeout_sec=2.0):
                 self.get_logger().error('Franka /grasp action not available.')

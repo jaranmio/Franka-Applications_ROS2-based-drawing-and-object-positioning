@@ -19,6 +19,7 @@
 #include <cmath>
 #include <algorithm>
 #include <chrono>
+#include <moveit/trajectory_processing/iterative_time_parameterization.h>
 
 YAML::Node config = YAML::LoadFile("/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/raster_config/config.yaml");
 std::string image_file = config["image_file"].as<std::string>();
@@ -307,7 +308,8 @@ int main(int argc, char **argv)
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
     mg.startStateMonitor();
     mg.setPlanningTime(10);
-    mg.setMaxVelocityScalingFactor(0.17);
+    mg.setMaxVelocityScalingFactor(0.2);
+    mg.setMaxAccelerationScalingFactor(0.2);
     mg.setPoseReferenceFrame("fr3_link0");
     mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
     // Constrain pencil to point down
@@ -322,6 +324,29 @@ int main(int argc, char **argv)
     moveit_msgs::msg::Constraints pc;
     pc.orientation_constraints.push_back(oc);
     mg.setPathConstraints(pc);
+
+    auto stamp_and_execute = [&](moveit_msgs::msg::RobotTrajectory &traj,
+                                double v_scale = 0.25,
+                                double a_scale = 0.25)
+    {
+        robot_trajectory::RobotTrajectory rt(mg.getRobotModel(),
+                                            mg.getName());
+        mg.setStartStateToCurrentState();
+        rt.setRobotTrajectoryMsg(*mg.getCurrentState(), traj);
+
+        trajectory_processing::IterativeParabolicTimeParameterization iptp;
+        bool ok = iptp.computeTimeStamps(rt, v_scale, a_scale);
+        if (!ok)
+        {
+            RCLCPP_ERROR(node->get_logger(), "Time-parameterisation failed");
+            return;
+        }
+        rt.getRobotTrajectoryMsg(traj);
+
+        moveit::planning_interface::MoveGroupInterface::Plan plan;
+        plan.trajectory_ = traj;
+        mg.execute(plan);                   
+    };
 
     cv::Mat img = cv::imread(IMAGE_PATH, cv::IMREAD_GRAYSCALE);
 
@@ -386,14 +411,13 @@ int main(int argc, char **argv)
 
         // Plan to the starting pose
         geometry_msgs::msg::Pose lift_start = image_to_pose(stroke.front().x, stroke.front().y, img.cols, img.rows, Z_PENCIL_RAISED);
+        mg.setStartStateToCurrentState();
         std::vector<geometry_msgs::msg::Pose> lift_start_path = {mg.getCurrentPose().pose, lift_start};
         moveit_msgs::msg::RobotTrajectory lift_start_traj;
         double start_frac = mg.computeCartesianPath(lift_start_path, 0.01, 0.0, lift_start_traj);
         if (start_frac >= 0.95)
         {
-            moveit::planning_interface::MoveGroupInterface::Plan plan;
-            plan.trajectory_ = lift_start_traj;
-            mg.execute(plan);
+            stamp_and_execute(lift_start_traj);
         }
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
@@ -401,7 +425,7 @@ int main(int argc, char **argv)
             double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
             const double HALF_HOURS_ELASPED = std::floor(ELAPSED_TIME_SECS / SECS_PER_HALF_HOUR);
             
-            if (HALF_HOURS_ELASPED < half_hours_tracking) { // reduce height only once per half hour
+            if (HALF_HOURS_ELASPED > half_hours_tracking) { // reduce height only once per half hour
                 const double HEIGHT_ADJUSTMENT = HALF_HOURS_ELASPED * height_rate;
                 DRAWING_HEIGHT -= HEIGHT_ADJUSTMENT;
                 RCLCPP_INFO(node->get_logger(), ("NEW HEIGHT SET: " + std::to_string(DRAWING_HEIGHT) + "m").c_str());
@@ -419,17 +443,17 @@ int main(int argc, char **argv)
             if (segment.size() < 2)
                 continue;
 
+            mg.setStartStateToCurrentState();
             moveit_msgs::msg::RobotTrajectory seg_traj;
             double frac = mg.computeCartesianPath(segment, 0.005, 0.0, seg_traj);
             if (frac >= 0.95)
             {
-                moveit::planning_interface::MoveGroupInterface::Plan plan;
-                plan.trajectory_ = seg_traj;
-                mg.execute(plan);
+                stamp_and_execute(seg_traj);
             }
             else
             {
                 mg.setPoseTarget(segment.back());
+                mg.setStartStateToCurrentState();
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
                 {
@@ -443,14 +467,13 @@ int main(int argc, char **argv)
 
         // Plan to the next start pose
         geometry_msgs::msg::Pose lift_end = image_to_pose(stroke.back().x, stroke.back().y, img.cols, img.rows, Z_PENCIL_RAISED);
+        mg.setStartStateToCurrentState();
         std::vector<geometry_msgs::msg::Pose> lift_end_path = {mg.getCurrentPose().pose, lift_end};
         moveit_msgs::msg::RobotTrajectory lift_end_traj;
         double end_frac = mg.computeCartesianPath(lift_end_path, 0.01, 0.0, lift_end_traj);
         if (end_frac >= 0.95)
         {
-            moveit::planning_interface::MoveGroupInterface::Plan plan;
-            plan.trajectory_ = lift_end_traj;
-            mg.execute(plan);
+            stamp_and_execute(lift_end_traj);
         }
     }
 
