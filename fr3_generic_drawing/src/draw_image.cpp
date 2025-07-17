@@ -394,13 +394,11 @@ int main(int argc, char **argv)
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_start_traj;
             mg.execute(plan);
-            rclcpp::sleep_for(std::chrono::milliseconds(200));
         }
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
         {
-            auto NOW = std::chrono::high_resolution_clock::now();
-            const double ELAPSED_TIME_SECS = (NOW - START).count();
+            double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
             const double HALF_HOURS_ELASPED = std::floor(ELAPSED_TIME_SECS / SECS_PER_HALF_HOUR);
             
             if (HALF_HOURS_ELASPED < half_hours_tracking) { // reduce height only once per half hour
@@ -428,7 +426,6 @@ int main(int argc, char **argv)
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 plan.trajectory_ = seg_traj;
                 mg.execute(plan);
-                rclcpp::sleep_for(std::chrono::milliseconds(200));
             }
             else
             {
@@ -437,7 +434,6 @@ int main(int argc, char **argv)
                 if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
                 {
                     mg.execute(plan);
-                    rclcpp::sleep_for(std::chrono::milliseconds(200));
                 }
                 else
                 {
@@ -455,12 +451,10 @@ int main(int argc, char **argv)
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_end_traj;
             mg.execute(plan);
-            rclcpp::sleep_for(std::chrono::milliseconds(200));
         }
     }
 
-    auto NOW = std::chrono::high_resolution_clock::now();
-    const double ELAPSED_TIME_SECS = (NOW - START).count();
+    double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
 
     RCLCPP_INFO(node->get_logger(), ("TOTAL DRAWING TIME: " + std::to_string(ELAPSED_TIME_SECS) + "secs").c_str());
 
