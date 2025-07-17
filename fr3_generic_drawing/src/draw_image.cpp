@@ -307,7 +307,7 @@ int main(int argc, char **argv)
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
     mg.startStateMonitor();
     mg.setPlanningTime(10);
-    mg.setMaxVelocityScalingFactor(0.3);
+    mg.setMaxVelocityScalingFactor(0.17);
     mg.setPoseReferenceFrame("fr3_link0");
     mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
     // Constrain pencil to point down
@@ -394,6 +394,7 @@ int main(int argc, char **argv)
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_start_traj;
             mg.execute(plan);
+            rclcpp::sleep_for(std::chrono::milliseconds(200));
         }
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
@@ -427,6 +428,7 @@ int main(int argc, char **argv)
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 plan.trajectory_ = seg_traj;
                 mg.execute(plan);
+                rclcpp::sleep_for(std::chrono::milliseconds(200));
             }
             else
             {
@@ -435,6 +437,7 @@ int main(int argc, char **argv)
                 if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
                 {
                     mg.execute(plan);
+                    rclcpp::sleep_for(std::chrono::milliseconds(200));
                 }
                 else
                 {
@@ -452,6 +455,7 @@ int main(int argc, char **argv)
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_end_traj;
             mg.execute(plan);
+            rclcpp::sleep_for(std::chrono::milliseconds(200));
         }
     }
 
