@@ -2,7 +2,7 @@
 image_file: image (7).png
 
 # desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
-pen_height: 20.0
+pen_height: 20
 
 # width of the paper on which the drawing is made, in cm
 paper_width: 60.0
@@ -11,14 +11,14 @@ paper_width: 60.0
 paper_length: 90.0
 
 # desired coverage of the drawing, as a percentage. For example, 80 = cover 80% of the paper
-coverage: 70
+coverage: 56
 
 # the rate at which the height of the pen is reduced in cm/hour. For example 0.2 = decrease height by 0.2cm (or 2mm) every hour
-height_rate: 0.04
+height_rate: 0.02
 
 # vertical position of the center of the image (up / down), in cm, with respect to the arm's base
 # increasing this values moves the center of the image up the paper
-image_center_x: 49 # 44.5
+image_center_x: 51 # 44.5
 
 # horizontal position of the center of the image (left / right), in cm, with respect to the arm's base
 # increasing this values moves the center of the image towards the left of the paper

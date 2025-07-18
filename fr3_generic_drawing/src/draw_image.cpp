@@ -308,8 +308,8 @@ int main(int argc, char **argv)
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
     mg.startStateMonitor();
     mg.setPlanningTime(10);
-    mg.setMaxVelocityScalingFactor(0.2);
-    mg.setMaxAccelerationScalingFactor(0.2);
+    mg.setMaxVelocityScalingFactor(0.1);
+    mg.setMaxAccelerationScalingFactor(0.1);
     mg.setPoseReferenceFrame("fr3_link0");
     mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
     // Constrain pencil to point down
@@ -321,8 +321,30 @@ int main(int argc, char **argv)
     oc.absolute_y_axis_tolerance = 0.1;
     oc.absolute_z_axis_tolerance = 0.1;
     oc.weight = 1.0;
+
+    const double min_height = pen_height - 0.012;
+    moveit_msgs::msg::PositionConstraint posc;
+    posc.link_name = mg.getEndEffectorLink();  // e.g., "pencil_tip"
+    posc.header.frame_id = "fr3_link0";        // or "world" if you're using that as root
+    // Define bounding box volume: large in x/y, only upward in z from min_height
+    shape_msgs::msg::SolidPrimitive bound;
+    bound.type = shape_msgs::msg::SolidPrimitive::BOX;
+    bound.dimensions.resize(3);
+    bound.dimensions[0] = 10.0;               // x dimension (wide)
+    bound.dimensions[1] = 10.0;               // y dimension (wide)
+    bound.dimensions[2] = 10.0;                // z dimension (tall enough to allow motion)
+    geometry_msgs::msg::Pose region_pose;
+    region_pose.position.x = 0.0;
+    region_pose.position.y = 0.0;
+    region_pose.position.z = min_height + bound.dimensions[2] / 2.0;  // center of box
+    region_pose.orientation.w = 1.0;  // identity rotation
+    posc.constraint_region.primitives.push_back(bound);
+    posc.constraint_region.primitive_poses.push_back(region_pose);
+    posc.weight = 10000.0;
+
     moveit_msgs::msg::Constraints pc;
     pc.orientation_constraints.push_back(oc);
+    pc.position_constraints.push_back(posc);
     mg.setPathConstraints(pc);
 
     auto stamp_and_execute = [&](moveit_msgs::msg::RobotTrajectory &traj,
@@ -331,7 +353,6 @@ int main(int argc, char **argv)
     {
         robot_trajectory::RobotTrajectory rt(mg.getRobotModel(),
                                             mg.getName());
-        mg.setStartStateToCurrentState();
         rt.setRobotTrajectoryMsg(*mg.getCurrentState(), traj);
 
         trajectory_processing::IterativeParabolicTimeParameterization iptp;
@@ -345,7 +366,8 @@ int main(int argc, char **argv)
 
         moveit::planning_interface::MoveGroupInterface::Plan plan;
         plan.trajectory_ = traj;
-        mg.execute(plan);                   
+        mg.execute(plan);
+        rclcpp::sleep_for(std::chrono::milliseconds(200));                
     };
 
     cv::Mat img = cv::imread(IMAGE_PATH, cv::IMREAD_GRAYSCALE);
@@ -403,6 +425,12 @@ int main(int argc, char **argv)
     auto START = std::chrono::high_resolution_clock::now(); // start clock
     double half_hours_tracking = 0; // variable to make sure we reduce exactly once per half hour
 
+
+    // std::vector<cv::Point2f> bounding_box = {cv::Point2f(0, 0), cv::Point2f(img.cols, 0), cv::Point2f(img.cols, img.rows), cv::Point2f(0, img.rows), cv::Point2f(0, 0)};
+    // std::vector<cv::Point2f> bounding_box_smaller = {cv::Point2f(img.cols / 4, img.rows / 4), cv::Point2f(img.cols * (3/4), img.rows / 4), cv::Point2f(img.cols * (3/4), img.rows * (3/4)), cv::Point2f(img.cols / 4, img.rows * (3/4)), cv::Point2f(img.cols / 4, img.rows / 4)};
+    // contoursFinal.insert(contoursFinal.begin(), bounding_box_smaller);
+    // contoursFinal.insert(contoursFinal.begin(), bounding_box);
+
     for (const auto &stroke : contoursFinal)
     {
 
@@ -411,7 +439,6 @@ int main(int argc, char **argv)
 
         // Plan to the starting pose
         geometry_msgs::msg::Pose lift_start = image_to_pose(stroke.front().x, stroke.front().y, img.cols, img.rows, Z_PENCIL_RAISED);
-        mg.setStartStateToCurrentState();
         std::vector<geometry_msgs::msg::Pose> lift_start_path = {mg.getCurrentPose().pose, lift_start};
         moveit_msgs::msg::RobotTrajectory lift_start_traj;
         double start_frac = mg.computeCartesianPath(lift_start_path, 0.01, 0.0, lift_start_traj);
@@ -423,7 +450,7 @@ int main(int argc, char **argv)
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
         {
             double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
-            const double HALF_HOURS_ELASPED = std::floor(ELAPSED_TIME_SECS / SECS_PER_HALF_HOUR);
+            const int HALF_HOURS_ELASPED = std::floor(ELAPSED_TIME_SECS / SECS_PER_HALF_HOUR);
             
             if (HALF_HOURS_ELASPED > half_hours_tracking) { // reduce height only once per half hour
                 const double HEIGHT_ADJUSTMENT = HALF_HOURS_ELASPED * height_rate;
@@ -443,7 +470,6 @@ int main(int argc, char **argv)
             if (segment.size() < 2)
                 continue;
 
-            mg.setStartStateToCurrentState();
             moveit_msgs::msg::RobotTrajectory seg_traj;
             double frac = mg.computeCartesianPath(segment, 0.005, 0.0, seg_traj);
             if (frac >= 0.95)
@@ -453,11 +479,11 @@ int main(int argc, char **argv)
             else
             {
                 mg.setPoseTarget(segment.back());
-                mg.setStartStateToCurrentState();
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
                 {
                     mg.execute(plan);
+                    rclcpp::sleep_for(std::chrono::milliseconds(200));
                 }
                 else
                 {
@@ -467,7 +493,6 @@ int main(int argc, char **argv)
 
         // Plan to the next start pose
         geometry_msgs::msg::Pose lift_end = image_to_pose(stroke.back().x, stroke.back().y, img.cols, img.rows, Z_PENCIL_RAISED);
-        mg.setStartStateToCurrentState();
         std::vector<geometry_msgs::msg::Pose> lift_end_path = {mg.getCurrentPose().pose, lift_end};
         moveit_msgs::msg::RobotTrajectory lift_end_traj;
         double end_frac = mg.computeCartesianPath(lift_end_path, 0.01, 0.0, lift_end_traj);
