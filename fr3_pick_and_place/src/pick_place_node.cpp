@@ -107,28 +107,13 @@ void MTCTaskNode::doTask()
   rclcpp::Parameter planning_param("planning", false);
   node_->set_parameter(planning_param);
 
-  const int MAX_EXECUTIONS = 300;
-  int success_count = 0;
-
-  for (int execution_count=1; execution_count<=MAX_EXECUTIONS; execution_count++) {
-    RCLCPP_INFO_STREAM(LOGGER, "Starting Execution No. " + std::to_string(execution_count));
-
-    try{
-      auto result = task_.execute(*task_.solutions().front());
-      if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
-      {
-        RCLCPP_ERROR_STREAM(LOGGER, "Execution No. " + std::to_string(execution_count) + " failed");
-        RCLCPP_ERROR_STREAM(LOGGER, "MoveIt2 error code for Execution No. " + std::to_string(execution_count) + ":" + std::to_string(result.val));
-      } else {
-        success_count++;
-        RCLCPP_INFO_STREAM(LOGGER, "Execution No. " + std::to_string(execution_count) + " success");
-      }
-    } catch(std::exception& e) {
-      RCLCPP_ERROR_STREAM(LOGGER, "Execution No. " + std::to_string(execution_count) + " failed");
-      RCLCPP_ERROR_STREAM(LOGGER, "Exception for Execution No. " + std::to_string(execution_count) + ":" + "\n" + e.what());
-    }
-
-    RCLCPP_INFO_STREAM(LOGGER, "Current success count: " + std::to_string(success_count));
+  auto result = task_.execute(*task_.solutions().front());
+  if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
+  {
+    RCLCPP_ERROR_STREAM(LOGGER, "Execution failed");
+    RCLCPP_ERROR_STREAM(LOGGER, "MoveIt2 error code for Execution " + std::to_string(result.val));
+  } else {
+    RCLCPP_INFO_STREAM(LOGGER, "Execution success");
   }
 
   return;
