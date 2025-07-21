@@ -422,9 +422,16 @@ int main(int argc, char **argv)
     auto saveDir = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/contours.png";
     cv::imwrite(saveDir, savedImage);
 
+    // code to print contour progress
+    // for (int c=0; c<contoursFinal.size(); c++) {
+    //    savedImage = cv::Mat(binary.size(), binary.type(), cv::Scalar(255, 255, 255));
+    //    cv::drawContours(savedImage, std::vector<std::vector<cv::Point>>(contoursToDraw.begin(), contoursToDraw.begin() + c), -1, cv::Scalar(0, 255, 0), 1);
+    //    auto saveDir = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/contours/contour" + std::to_string(c) + ".png";
+    //    cv::imwrite(saveDir, savedImage);
+    //}
+
     auto START = std::chrono::high_resolution_clock::now(); // start clock
     double half_hours_tracking = 0; // variable to make sure we reduce exactly once per half hour
-
 
     // std::vector<cv::Point2f> bounding_box = {cv::Point2f(0, 0), cv::Point2f(img.cols, 0), cv::Point2f(img.cols, img.rows), cv::Point2f(0, img.rows), cv::Point2f(0, 0)};
     // std::vector<cv::Point2f> bounding_box_smaller = {cv::Point2f(img.cols / 4, img.rows / 4), cv::Point2f(img.cols * (3/4), img.rows / 4), cv::Point2f(img.cols * (3/4), img.rows * (3/4)), cv::Point2f(img.cols / 4, img.rows * (3/4)), cv::Point2f(img.cols / 4, img.rows / 4)};

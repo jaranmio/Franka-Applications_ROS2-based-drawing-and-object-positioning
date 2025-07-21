@@ -1,5 +1,5 @@
 # full name (with extension) of the image to be drawn
-image_file: image (7).png
+image_file: image (2).png
 
 # desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
 pen_height: 18.7
