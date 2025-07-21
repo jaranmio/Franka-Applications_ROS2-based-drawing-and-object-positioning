@@ -308,8 +308,8 @@ int main(int argc, char **argv)
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
     mg.startStateMonitor();
     mg.setPlanningTime(10);
-    mg.setMaxVelocityScalingFactor(0.1);
-    mg.setMaxAccelerationScalingFactor(0.1);
+    mg.setMaxVelocityScalingFactor(0.15);
+    mg.setMaxAccelerationScalingFactor(0.15);
     mg.setPoseReferenceFrame("fr3_link0");
     mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
     // Constrain pencil to point down
