@@ -2,7 +2,7 @@
 image_file: image (7).png
 
 # desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
-pen_height: 20
+pen_height: 18.7
 
 # width of the paper on which the drawing is made, in cm
 paper_width: 60.0
@@ -14,7 +14,7 @@ paper_length: 90.0
 coverage: 56
 
 # the rate at which the height of the pen is reduced in cm/hour. For example 0.2 = decrease height by 0.2cm (or 2mm) every hour
-height_rate: 0.02
+height_rate: 0.04 # cm per hour. for example 0.04 means 0.4 mm per hour
 
 # vertical position of the center of the image (up / down), in cm, with respect to the arm's base
 # increasing this values moves the center of the image up the paper
@@ -26,6 +26,8 @@ image_center_y: 0
 
 # Saved values for pen height
 # 15.4 PRANG peel off HB
-# 18.2c Paris Conte Charcoal add groundplate
+# 19.7 Paris Conte Charcoal 20 July
 # 13.2 - creata color monolith HB
 # 16 (approx. not working) - carbon sketch
+# 19.7 LEAD CREATCOLOR CHARCOAL holder
+# 18.5 HEEIGHT FOR CALLIGRAPHIC PENCIL cALLI CREATIVE iTALIC
