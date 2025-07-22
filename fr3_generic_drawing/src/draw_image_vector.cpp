@@ -23,6 +23,7 @@
 #include <cmath>
 #include <algorithm>
 #include <chrono>
+#include <moveit/trajectory_processing/iterative_time_parameterization.h>
 
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
@@ -52,6 +53,8 @@ const double X_ORIGIN = center_x;
 const double Y_ORIGIN = center_y;
 const int SEGMENT_SIZE = 10;
 const double SECS_PER_HALF_HOUR = 30 * 60;
+
+std::vector<moveit::planning_interface::MoveGroupInterface::Plan> plans = {};
 
 struct Point
 {
@@ -185,10 +188,11 @@ int main(int argc, char **argv)
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
     mg.startStateMonitor();
     mg.setPlanningTime(10);
-    mg.setMaxVelocityScalingFactor(0.3);
+    mg.setMaxVelocityScalingFactor(0.1);
+    mg.setMaxAccelerationScalingFactor(0.1);
     mg.setPoseReferenceFrame("fr3_link0");
-    mg.setEndEffectorLink("fr3_hand_tcp");
-
+    mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
+    // Constrain pencil to point down
     moveit_msgs::msg::OrientationConstraint oc;
     oc.link_name = mg.getEndEffectorLink();
     oc.header.frame_id = "fr3_link0";
@@ -197,9 +201,53 @@ int main(int argc, char **argv)
     oc.absolute_y_axis_tolerance = 0.1;
     oc.absolute_z_axis_tolerance = 0.1;
     oc.weight = 1.0;
-    moveit_msgs::msg::Constraints path_constraints;
-    path_constraints.orientation_constraints.push_back(oc);
-    mg.setPathConstraints(path_constraints);
+
+    const double min_height = pen_height - 0.012;
+    moveit_msgs::msg::PositionConstraint posc;
+    posc.link_name = mg.getEndEffectorLink();  // e.g., "pencil_tip"
+    posc.header.frame_id = "fr3_link0";        // or "world" if you're using that as root
+    // Define bounding box volume: large in x/y, only upward in z from min_height
+    shape_msgs::msg::SolidPrimitive bound;
+    bound.type = shape_msgs::msg::SolidPrimitive::BOX;
+    bound.dimensions.resize(3);
+    bound.dimensions[0] = 10.0;               // x dimension (wide)
+    bound.dimensions[1] = 10.0;               // y dimension (wide)
+    bound.dimensions[2] = 10.0;                // z dimension (tall enough to allow motion)
+    geometry_msgs::msg::Pose region_pose;
+    region_pose.position.x = 0.0;
+    region_pose.position.y = 0.0;
+    region_pose.position.z = min_height + bound.dimensions[2] / 2.0;  // center of box
+    region_pose.orientation.w = 1.0;  // identity rotation
+    posc.constraint_region.primitives.push_back(bound);
+    posc.constraint_region.primitive_poses.push_back(region_pose);
+    posc.weight = 10000.0;
+
+    moveit_msgs::msg::Constraints pc;
+    pc.orientation_constraints.push_back(oc);
+    pc.position_constraints.push_back(posc);
+    mg.setPathConstraints(pc);
+
+    auto stamp_and_store = [&](moveit_msgs::msg::RobotTrajectory &traj,
+                                double v_scale = 0.25,
+                                double a_scale = 0.25)
+    {
+        robot_trajectory::RobotTrajectory rt(mg.getRobotModel(),
+                                            mg.getName());
+        rt.setRobotTrajectoryMsg(*mg.getCurrentState(), traj);
+
+        trajectory_processing::IterativeParabolicTimeParameterization iptp;
+        bool ok = iptp.computeTimeStamps(rt, v_scale, a_scale);
+        if (!ok)
+        {
+            RCLCPP_ERROR(node->get_logger(), "Time-parameterisation failed");
+            return;
+        }
+        rt.getRobotTrajectoryMsg(traj);
+
+        moveit::planning_interface::MoveGroupInterface::Plan plan;
+        plan.trajectory_ = traj;
+        plans.push_back(plan);
+    };
 
     NSVGimage *image = nsvgParseFromFile(IMAGE_PATH.c_str(), "px", 96.0f);
     if (!image)
@@ -211,32 +259,12 @@ int main(int argc, char **argv)
     float width = image->height; // inversion is intentional, just for logic of calculating conversion factor
     float length = image->width;
 
-    // find conversion factor that maximizes area coverage
-    const double image_aspect_ratio = length / width;
-    
-    const double paper_aspect_ratio = paper_length / paper_width;
-
-    double limiting_image_dimension;
-    double limiting_paper_dimension;
-    
-    if ((paper_aspect_ratio > 1 && image_aspect_ratio > 1) || (paper_aspect_ratio < 1 && image_aspect_ratio < 1)) {
-        // same aspect ratio
-        limiting_paper_dimension = std::min(paper_width, paper_length);
-        limiting_image_dimension = std::min(width, length);
-    } else{
-        limiting_paper_dimension = std::min(paper_width, paper_length);
-        limiting_image_dimension = std::max(width, length);
-    }
-
-    CONVERSION_FACTOR = limiting_paper_dimension / limiting_image_dimension;
-    CONVERSION_FACTOR *= std::sqrt(percent_coverage / 100);
-    RCLCPP_INFO(node->get_logger(), ("CONVERSION FACTOR: " + std::to_string(CONVERSION_FACTOR)).c_str());
-
     auto contours = extract_svg_paths(image);
 
     auto START = std::chrono::high_resolution_clock::now(); // start clock
     double half_hours_tracking = 0; // variable to make sure we reduce exactly once per half hour
 
+    RCLCPP_INFO(node->get_logger(), "STARTING PLANNING");
     for (const auto &stroke : contours)
     {
         if (stroke.size() < 2)
@@ -249,7 +277,7 @@ int main(int argc, char **argv)
         {
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_start_traj;
-            mg.execute(plan);
+            stamp_and_store(lift_start_traj);
         }
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
@@ -280,14 +308,14 @@ int main(int argc, char **argv)
             {
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 plan.trajectory_ = seg_traj;
-                mg.execute(plan);
+                stamp_and_store(seg_traj);
             }
             else
             {
                 mg.setPoseTarget(segment.back());
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
-                    mg.execute(plan);
+                    plans.push_back(plan);
             }
         }
 
@@ -298,15 +326,26 @@ int main(int argc, char **argv)
         {
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_end_traj;
-            mg.execute(plan);
+            stamp_and_store(lift_end_traj);
         }
     }
 
-    auto NOW = std::chrono::high_resolution_clock::now();
-    const double ELAPSED_TIME_SECS = (NOW - START).count();
+    RCLCPP_INFO(node->get_logger(), "PLANNING FINISHED");
+
+    RCLCPP_INFO(node->get_logger(), "STARTING EXECUTION");
+    int exec_count = 0;
+    for (moveit::planning_interface::MoveGroupInterface::Plan plan : plans) {
+        exec_count++;
+        RCLCPP_INFO(node->get_logger(), ("LAUNCHING EXECUTION No" + std::to_string(exec_count)).c_str());
+        mg.execute(plan);
+        rclcpp::sleep_for(std::chrono::milliseconds(200));
+    }
+    RCLCPP_INFO(node->get_logger(), "EXECUTION FINISHED");
+
+    double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
 
     RCLCPP_INFO(node->get_logger(), ("TOTAL DRAWING TIME: " + std::to_string(ELAPSED_TIME_SECS) + "secs").c_str());
-    
+
     rclcpp::shutdown();
 
     return 0;
