@@ -23,6 +23,7 @@
 #include <cmath>
 #include <algorithm>
 #include <chrono>
+#include <moveit/trajectory_processing/iterative_time_parameterization.h>
 
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
@@ -223,6 +224,29 @@ int main(int argc, char **argv)
     pc.position_constraints.push_back(posc);
     mg.setPathConstraints(pc);
 
+    auto stamp_and_execute = [&](moveit_msgs::msg::RobotTrajectory &traj,
+                                double v_scale = 0.25,
+                                double a_scale = 0.25)
+    {
+        robot_trajectory::RobotTrajectory rt(mg.getRobotModel(),
+                                            mg.getName());
+        rt.setRobotTrajectoryMsg(*mg.getCurrentState(), traj);
+
+        trajectory_processing::IterativeParabolicTimeParameterization iptp;
+        bool ok = iptp.computeTimeStamps(rt, v_scale, a_scale);
+        if (!ok)
+        {
+            RCLCPP_ERROR(node->get_logger(), "Time-parameterisation failed");
+            return;
+        }
+        rt.getRobotTrajectoryMsg(traj);
+
+        moveit::planning_interface::MoveGroupInterface::Plan plan;
+        plan.trajectory_ = traj;
+        mg.execute(plan);
+        rclcpp::sleep_for(std::chrono::milliseconds(200));                
+    };
+
     NSVGimage *image = nsvgParseFromFile(IMAGE_PATH.c_str(), "px", 96.0f);
     if (!image)
     {
@@ -271,7 +295,7 @@ int main(int argc, char **argv)
         {
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_start_traj;
-            mg.execute(plan);
+            stamp_and_execute(lift_start_traj);
         }
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
@@ -302,7 +326,7 @@ int main(int argc, char **argv)
             {
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 plan.trajectory_ = seg_traj;
-                mg.execute(plan);
+                stamp_and_execute(seg_traj);
             }
             else
             {
@@ -310,6 +334,7 @@ int main(int argc, char **argv)
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
                     mg.execute(plan);
+                    rclcpp::sleep_for(std::chrono::milliseconds(200));
             }
         }
 
@@ -320,7 +345,7 @@ int main(int argc, char **argv)
         {
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_end_traj;
-            mg.execute(plan);
+            stamp_and_execute(lift_end_traj);
         }
     }
 
