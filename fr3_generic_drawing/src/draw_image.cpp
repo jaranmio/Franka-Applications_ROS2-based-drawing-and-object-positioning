@@ -46,8 +46,6 @@ const double Y_ORIGIN = center_y;
 const int SEGMENT_SIZE = 10 * 2;
 const double SECS_PER_HALF_HOUR = 30 * 60;
 
-std::vector<moveit::planning_interface::MoveGroupInterface::Plan> plans = {};
-
 template <typename T>
 T clamp(T val, T low, T high)
 {
@@ -349,7 +347,7 @@ int main(int argc, char **argv)
     pc.position_constraints.push_back(posc);
     mg.setPathConstraints(pc);
 
-    auto stamp_and_store = [&](moveit_msgs::msg::RobotTrajectory &traj,
+    auto stamp_and_execute = [&](moveit_msgs::msg::RobotTrajectory &traj,
                                 double v_scale = 0.25,
                                 double a_scale = 0.25)
     {
@@ -368,7 +366,8 @@ int main(int argc, char **argv)
 
         moveit::planning_interface::MoveGroupInterface::Plan plan;
         plan.trajectory_ = traj;
-        plans.push_back(plan);
+        mg.execute(plan);
+        rclcpp::sleep_for(std::chrono::milliseconds(200));                
     };
 
     cv::Mat img = cv::imread(IMAGE_PATH, cv::IMREAD_GRAYSCALE);
@@ -439,7 +438,6 @@ int main(int argc, char **argv)
     // contoursFinal.insert(contoursFinal.begin(), bounding_box_smaller);
     // contoursFinal.insert(contoursFinal.begin(), bounding_box);
 
-    RCLCPP_INFO(node->get_logger(), "STARTING PLANNING");
     for (const auto &stroke : contoursFinal)
     {
 
@@ -453,7 +451,7 @@ int main(int argc, char **argv)
         double start_frac = mg.computeCartesianPath(lift_start_path, 0.01, 0.0, lift_start_traj);
         if (start_frac >= 0.95)
         {
-            stamp_and_store(lift_start_traj);
+            stamp_and_execute(lift_start_traj);
         }
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
@@ -483,7 +481,7 @@ int main(int argc, char **argv)
             double frac = mg.computeCartesianPath(segment, 0.005, 0.0, seg_traj);
             if (frac >= 0.95)
             {
-                stamp_and_store(seg_traj);
+                stamp_and_execute(seg_traj);
             }
             else
             {
@@ -491,7 +489,8 @@ int main(int argc, char **argv)
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
                 {
-                    plans.push_back(plan);
+                    mg.execute(plan);
+                    rclcpp::sleep_for(std::chrono::milliseconds(200));
                 }
                 else
                 {
@@ -506,21 +505,9 @@ int main(int argc, char **argv)
         double end_frac = mg.computeCartesianPath(lift_end_path, 0.01, 0.0, lift_end_traj);
         if (end_frac >= 0.95)
         {
-            stamp_and_store(lift_end_traj);
+            stamp_and_execute(lift_end_traj);
         }
     }
-
-    RCLCPP_INFO(node->get_logger(), "PLANNING FINISHED");
-
-    RCLCPP_INFO(node->get_logger(), "STARTING EXECUTION");
-    int exec_count = 0;
-    for (moveit::planning_interface::MoveGroupInterface::Plan plan : plans) {
-        exec_count++;
-        RCLCPP_INFO(node->get_logger(), ("LAUNCHING EXECUTION No" + std::to_string(exec_count)).c_str());
-        mg.execute(plan);
-        rclcpp::sleep_for(std::chrono::milliseconds(200));
-    }
-    RCLCPP_INFO(node->get_logger(), "EXECUTION FINISHED");
 
     double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
 

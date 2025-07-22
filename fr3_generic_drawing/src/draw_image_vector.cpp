@@ -23,7 +23,6 @@
 #include <cmath>
 #include <algorithm>
 #include <chrono>
-#include <moveit/trajectory_processing/iterative_time_parameterization.h>
 
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
@@ -51,10 +50,8 @@ const double RAISING_AMOUNT = 0.05;
 const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
 const double X_ORIGIN = center_x;
 const double Y_ORIGIN = center_y;
-const int SEGMENT_SIZE = 10;
+const int SEGMENT_SIZE = 10 * 2;
 const double SECS_PER_HALF_HOUR = 30 * 60;
-
-std::vector<moveit::planning_interface::MoveGroupInterface::Plan> plans = {};
 
 struct Point
 {
@@ -179,7 +176,7 @@ int main(int argc, char **argv)
     node_options.automatically_declare_parameters_from_overrides(true);
     auto node = rclcpp::Node::make_shared("fr3_sketch_node", node_options);
 
-    rclcpp::executors::SingleThreadedExecutor executor;
+    rclcpp::executors::MultiThreadedExecutor executor;
     executor.add_node(node);
     std::thread([&executor]()
                 { executor.spin(); })
@@ -188,11 +185,10 @@ int main(int argc, char **argv)
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
     mg.startStateMonitor();
     mg.setPlanningTime(10);
-    mg.setMaxVelocityScalingFactor(0.1);
-    mg.setMaxAccelerationScalingFactor(0.1);
+    mg.setMaxVelocityScalingFactor(0.3);
     mg.setPoseReferenceFrame("fr3_link0");
     mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
-    // Constrain pencil to point down
+
     moveit_msgs::msg::OrientationConstraint oc;
     oc.link_name = mg.getEndEffectorLink();
     oc.header.frame_id = "fr3_link0";
@@ -226,28 +222,6 @@ int main(int argc, char **argv)
     pc.orientation_constraints.push_back(oc);
     pc.position_constraints.push_back(posc);
     mg.setPathConstraints(pc);
-
-    auto stamp_and_store = [&](moveit_msgs::msg::RobotTrajectory &traj,
-                                double v_scale = 0.25,
-                                double a_scale = 0.25)
-    {
-        robot_trajectory::RobotTrajectory rt(mg.getRobotModel(),
-                                            mg.getName());
-        rt.setRobotTrajectoryMsg(*mg.getCurrentState(), traj);
-
-        trajectory_processing::IterativeParabolicTimeParameterization iptp;
-        bool ok = iptp.computeTimeStamps(rt, v_scale, a_scale);
-        if (!ok)
-        {
-            RCLCPP_ERROR(node->get_logger(), "Time-parameterisation failed");
-            return;
-        }
-        rt.getRobotTrajectoryMsg(traj);
-
-        moveit::planning_interface::MoveGroupInterface::Plan plan;
-        plan.trajectory_ = traj;
-        plans.push_back(plan);
-    };
 
     NSVGimage *image = nsvgParseFromFile(IMAGE_PATH.c_str(), "px", 96.0f);
     if (!image)
@@ -285,7 +259,6 @@ int main(int argc, char **argv)
     auto START = std::chrono::high_resolution_clock::now(); // start clock
     double half_hours_tracking = 0; // variable to make sure we reduce exactly once per half hour
 
-    RCLCPP_INFO(node->get_logger(), "STARTING PLANNING");
     for (const auto &stroke : contours)
     {
         if (stroke.size() < 2)
@@ -298,7 +271,7 @@ int main(int argc, char **argv)
         {
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_start_traj;
-            stamp_and_store(lift_start_traj);
+            mg.execute(plan);
         }
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
@@ -329,14 +302,14 @@ int main(int argc, char **argv)
             {
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 plan.trajectory_ = seg_traj;
-                stamp_and_store(seg_traj);
+                mg.execute(plan);
             }
             else
             {
                 mg.setPoseTarget(segment.back());
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
                 if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
-                    plans.push_back(plan);
+                    mg.execute(plan);
             }
         }
 
@@ -347,26 +320,15 @@ int main(int argc, char **argv)
         {
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = lift_end_traj;
-            stamp_and_store(lift_end_traj);
+            mg.execute(plan);
         }
     }
 
-    RCLCPP_INFO(node->get_logger(), "PLANNING FINISHED");
-
-    RCLCPP_INFO(node->get_logger(), "STARTING EXECUTION");
-    int exec_count = 0;
-    for (moveit::planning_interface::MoveGroupInterface::Plan plan : plans) {
-        exec_count++;
-        RCLCPP_INFO(node->get_logger(), ("LAUNCHING EXECUTION No" + std::to_string(exec_count)).c_str());
-        mg.execute(plan);
-        rclcpp::sleep_for(std::chrono::milliseconds(200));
-    }
-    RCLCPP_INFO(node->get_logger(), "EXECUTION FINISHED");
-
-    double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
+    auto NOW = std::chrono::high_resolution_clock::now();
+    const double ELAPSED_TIME_SECS = (NOW - START).count();
 
     RCLCPP_INFO(node->get_logger(), ("TOTAL DRAWING TIME: " + std::to_string(ELAPSED_TIME_SECS) + "secs").c_str());
-
+    
     rclcpp::shutdown();
 
     return 0;
