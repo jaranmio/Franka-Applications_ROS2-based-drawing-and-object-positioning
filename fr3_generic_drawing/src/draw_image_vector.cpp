@@ -300,11 +300,10 @@ int main(int argc, char **argv)
 
         for (size_t i = 0; i < stroke.size(); i += SEGMENT_SIZE)
         {
-            auto NOW = std::chrono::high_resolution_clock::now();
-            const double ELAPSED_TIME_SECS = (NOW - START).count();
-            const double HALF_HOURS_ELASPED = std::floor(ELAPSED_TIME_SECS / SECS_PER_HALF_HOUR);
+            double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
+            const int HALF_HOURS_ELASPED = std::floor(ELAPSED_TIME_SECS / SECS_PER_HALF_HOUR);
             
-            if (HALF_HOURS_ELASPED < half_hours_tracking) { // reduce height only once per half hour
+            if (HALF_HOURS_ELASPED > half_hours_tracking) { // reduce height only once per half hour
                 const double HEIGHT_ADJUSTMENT = HALF_HOURS_ELASPED * height_rate;
                 DRAWING_HEIGHT -= HEIGHT_ADJUSTMENT;
                 RCLCPP_INFO(node->get_logger(), ("NEW HEIGHT SET: " + std::to_string(DRAWING_HEIGHT) + "m").c_str());
@@ -349,8 +348,7 @@ int main(int argc, char **argv)
         }
     }
 
-    auto NOW = std::chrono::high_resolution_clock::now();
-    const double ELAPSED_TIME_SECS = (NOW - START).count();
+    double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
 
     RCLCPP_INFO(node->get_logger(), ("TOTAL DRAWING TIME: " + std::to_string(ELAPSED_TIME_SECS) + "secs").c_str());
     
