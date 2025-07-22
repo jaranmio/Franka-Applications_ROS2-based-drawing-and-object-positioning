@@ -259,6 +259,27 @@ int main(int argc, char **argv)
     float width = image->height; // inversion is intentional, just for logic of calculating conversion factor
     float length = image->width;
 
+    // find conversion factor that maximizes area coverage
+    const double image_aspect_ratio = length / width;
+    
+    const double paper_aspect_ratio = paper_length / paper_width;
+
+    double limiting_image_dimension;
+    double limiting_paper_dimension;
+    
+    if ((paper_aspect_ratio > 1 && image_aspect_ratio > 1) || (paper_aspect_ratio < 1 && image_aspect_ratio < 1)) {
+        // same aspect ratio
+        limiting_paper_dimension = std::min(paper_width, paper_length);
+        limiting_image_dimension = std::min(width, length);
+    } else{
+        limiting_paper_dimension = std::min(paper_width, paper_length);
+        limiting_image_dimension = std::max(width, length);
+    }
+
+    CONVERSION_FACTOR = limiting_paper_dimension / limiting_image_dimension;
+    CONVERSION_FACTOR *= std::sqrt(percent_coverage / 100);
+    RCLCPP_INFO(node->get_logger(), ("CONVERSION FACTOR: " + std::to_string(CONVERSION_FACTOR)).c_str());
+
     auto contours = extract_svg_paths(image);
 
     auto START = std::chrono::high_resolution_clock::now(); // start clock
