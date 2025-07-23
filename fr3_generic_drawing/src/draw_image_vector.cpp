@@ -293,8 +293,6 @@ int main(int argc, char **argv)
         moveit_msgs::msg::RobotTrajectory lift_start_traj;
         if (mg.computeCartesianPath(lift_start_path, 0.01, 0.0, lift_start_traj) >= 0.95)
         {
-            moveit::planning_interface::MoveGroupInterface::Plan plan;
-            plan.trajectory_ = lift_start_traj;
             stamp_and_execute(lift_start_traj);
         }
 
@@ -314,8 +312,8 @@ int main(int argc, char **argv)
             std::vector<geometry_msgs::msg::Pose> segment;
             for (size_t j = i; j < end_index; ++j)
             {
-                int x = clamp(static_cast<int>(stroke[j].x), 0, static_cast<int>(image->height) - 1);
-                int y = clamp(static_cast<int>(stroke[j].y), 0, static_cast<int>(image->width) - 1);
+                int x = stroke[j].x;
+                int y = stroke[j].y;
                 segment.push_back(image_to_pose(x, y, image->width, image->height, Z_PENCIL_DOWN));
             }
             if (segment.size() < 2)
