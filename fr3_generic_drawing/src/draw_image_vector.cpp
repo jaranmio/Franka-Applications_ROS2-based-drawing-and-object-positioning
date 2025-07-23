@@ -331,9 +331,10 @@ int main(int argc, char **argv)
             {
                 mg.setPoseTarget(segment.back());
                 moveit::planning_interface::MoveGroupInterface::Plan plan;
-                if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
+                if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS) {
                     mg.execute(plan);
                     rclcpp::sleep_for(std::chrono::milliseconds(200));
+                }
             }
         }
 
