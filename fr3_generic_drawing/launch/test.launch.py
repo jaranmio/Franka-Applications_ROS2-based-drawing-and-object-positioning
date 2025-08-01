@@ -47,7 +47,7 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package="fr3_generic_drawing",
-            executable="draw_image",
+            executable="repeat_test",
             output="screen",
             parameters=[
                 # Use same robot description that move_group has

@@ -2,7 +2,8 @@
 image_file: image (1).png
 
 # desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
-pen_height: 20
+pen_height: 19.7
+
 
 # width of the paper on which the drawing is made, in cm
 paper_width: 60.0

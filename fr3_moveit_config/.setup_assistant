@@ -1,7 +1,7 @@
 moveit_setup_assistant_config:
   URDF:
     package: franka_description
-    relative_path: robots/fr3/fr3.urdf
+    relative_path: robots/fr3/fr3.urdf.xacro
   SRDF:
     relative_path: config/fr3_arm_hand.srdf.xacro
   CONFIG:

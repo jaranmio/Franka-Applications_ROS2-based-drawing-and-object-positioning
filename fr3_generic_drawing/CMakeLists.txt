@@ -19,6 +19,9 @@ ament_target_dependencies(draw_image rclcpp OpenCV moveit_ros_planning_interface
 add_executable(draw_image_vector src/draw_image_vector.cpp)
 ament_target_dependencies(draw_image_vector rclcpp OpenCV moveit_ros_planning_interface geometry_msgs visualization_msgs tf2_ros yaml_cpp_vendor)
 
+add_executable(repeat_test src/repeat_test.cpp)
+ament_target_dependencies(repeat_test rclcpp OpenCV moveit_ros_planning_interface geometry_msgs visualization_msgs tf2_ros yaml_cpp_vendor)
+
 install(TARGETS
   draw_image
   DESTINATION lib/${PROJECT_NAME}
@@ -26,6 +29,11 @@ install(TARGETS
 
 install(TARGETS
   draw_image_vector
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS
+  repeat_test
   DESTINATION lib/${PROJECT_NAME}
 )
 
