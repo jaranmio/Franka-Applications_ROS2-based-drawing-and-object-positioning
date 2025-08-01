@@ -44,7 +44,8 @@ class USDPosePublisher(Node):
                     transform_msg = TransformStamped()
                     transform_msg.header.stamp = self.get_clock().now().to_msg()
                     transform_msg.header.frame_id = 'fr3_link0'  # Set base frame
-                    transform_msg.child_frame_id = f'target_{prim.GetName()}_frame'  # Child frame is the prim
+                    name = prim_path.split('/')[2]
+                    transform_msg.child_frame_id = f'target_{name}_frame'  # Child frame is the prim
 
                     transform_msg.transform.translation.x = relative_translation[0]
                     transform_msg.transform.translation.y = relative_translation[1]
@@ -72,17 +73,12 @@ class USDPosePublisher(Node):
     def get_prim_pose(self, prim_path):
         prim = self.stage.GetPrimAtPath(prim_path)
 
-        UsdGeom.XformCache().GetLocalToWorldTransform(prim)
+        xformable = UsdGeom.Xformable(prim)
+        world_transform_matrix = xformable.ComputeLocalToWorldTransform(Usd.TimeCode.Default())
+        position = world_transform_matrix.ExtractTranslation()
 
-        position = prim.GetAttribute('xformOp:translate').Get()
-        orientation_xyz = prim.GetAttribute('xformOp:rotateXYZ').Get()
-        if orientation_xyz:
-            # convert to Quaternion of type Gf.Quatd
-            rotation = Gf.Rotation(Gf.Vec3d(0,0,1), math.degrees(orientation_xyz[2])) * Gf.Rotation(Gf.Vec3d(0,1,0), math.degrees(orientation_xyz[1])) * Gf.Rotation(Gf.Vec3d(1,0,0), math.degrees(orientation_xyz[0]))
-            orientation = Gf.Quatd(rotation.GetQuaternion().GetReal(), rotation.GetQuaternion().GetImaginary()) 
-            self.get_logger().info(f"XYZ rotation: {orientation_xyz}")
-        else:
-            orientation = prim.GetAttribute('xformOp:orient').Get()
+        rotation = world_transform_matrix.ExtractRotation()
+        orientation = Gf.Quatd(rotation.GetQuaternion().GetReal(), rotation.GetQuaternion().GetImaginary()) 
         
         return position, orientation.GetNormalized()
 
@@ -92,8 +88,8 @@ def main(args=None):
 
     try:
         # Define the USD file path and prim paths to track
-        usd_file_path = '/home/qpaig/AI-Robotic project/fr3/fr3_experiments_sim_ground_truth.usd'
-        prim_paths = ['/World/object']
+        usd_file_path = '/home/qpaig/AI-Robotic project/fr3/fr3_experiments_4f_sim.usd'
+        prim_paths = ['/World/LASER/Group/PH3E_Step/tn__PH3EStep_bC', '/World/CAMERA/Group/PH3E_Step/tn__PH3EStep_bC']
         reference_prim = '/World/fr3'
 
         node = USDPosePublisher(usd_file_path, prim_paths, reference_prim)
