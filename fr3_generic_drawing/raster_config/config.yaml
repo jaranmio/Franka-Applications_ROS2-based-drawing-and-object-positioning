@@ -1,8 +1,11 @@
+
+
 # full name (with extension) of the image to be drawn
-image_file: image (1).png
+image_file: image (7).png
 
 # desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
-pen_height: 20
+pen_height: 24.6
++-+*
 
 # width of the paper on which the drawing is made, in cm
 paper_width: 60.0
@@ -14,7 +17,7 @@ paper_length: 90.0
 coverage: 75
 
 # the rate at which the height of the pen is reduced in cm/hour. For example 0.2 = decrease height by 0.2cm (or 2mm) every hour
-height_rate: 0.30 # cm per hour. for example 0.04 means 0.4 mm per hour
+height_rate: 0.60 # cm per hour. for example 0.04 means 0.4 mm per hour
 
 # vertical position of the center of the image (up / down), in cm, with respect to the arm's base
 # increasing this values moves the center of the image up the paper
@@ -32,9 +35,9 @@ image_center_y: 10
 # 13.2 - creata color monolith HB
 # 16 (approx. not working) - carbon sketch
 # 19.7  - 20 LEAD CREATCOLOR CHARCOAL holder  0.08-0.13 pressure
-# 18.5 HEEIGHT FOR CALLIGRAPHIC PENCIL cALLI CREATIVE iTALIC
+# 21.1 HEEIGHT FOR CALLIGRAPHIC PENCIL cALLI CREATIVE iTALIC
 # 17.0 preppy federhalter
 # 19.0 or 18.7 alli Creative Italic Manuscript
 # 15.5 wax crayon
 # 22.0 Paris Conte Roetel
-# 22.00 MONOLOLITH creatcolor graphite
+# 22.00 MONOLOLITH creatcolor graphite 19.3 last settting
