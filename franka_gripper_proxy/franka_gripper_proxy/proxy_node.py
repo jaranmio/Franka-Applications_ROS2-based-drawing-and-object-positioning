@@ -95,10 +95,10 @@ class GripperCommandProxy(Node):
 
             grasp_goal = Grasp.Goal()
             grasp_goal.width = position
-            grasp_goal.force = effort
-            grasp_goal.speed = 0.05
-            grasp_goal.epsilon.inner = 0.01
-            grasp_goal.epsilon.outer = 0.01
+            grasp_goal.force = 30.0
+            grasp_goal.speed = 0.1
+            grasp_goal.epsilon.inner = 0.06
+            grasp_goal.epsilon.outer = 0.06
 
             send_goal_future = self._grasp_client.send_goal_async(grasp_goal)
             grasp_goal_handle = await send_goal_future

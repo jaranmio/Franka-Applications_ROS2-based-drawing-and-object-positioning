@@ -55,7 +55,7 @@ T clamp(T val, T low, T high)
 geometry_msgs::msg::Quaternion vertical_orientation()
 {
     tf2::Quaternion q;
-    q.setRPY(M_PI, 0, 0);
+    q.setRPY(M_PI, 0, 0); // q.setRPY(M_PI, -M_PI / 3, 0);
     q.normalize();
     return tf2::toMsg(q);
 }
@@ -305,47 +305,51 @@ int main(int argc, char **argv)
                 { executor.spin(); })
         .detach();
 
+    auto configure_move_group = [&] (moveit::planning_interface::MoveGroupInterface& move_group) {
+        move_group.startStateMonitor();
+        move_group.setPlanningTime(10);
+        move_group.setMaxVelocityScalingFactor(0.15);
+        move_group.setMaxAccelerationScalingFactor(0.15);
+        move_group.setPoseReferenceFrame("fr3_link0");
+        move_group.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
+        // Constrain pencil to point down
+        moveit_msgs::msg::OrientationConstraint oc;
+        oc.link_name = move_group.getEndEffectorLink();
+        oc.header.frame_id = "fr3_link0";
+        oc.orientation = vertical_orientation();
+        oc.absolute_x_axis_tolerance = 0.1;
+        oc.absolute_y_axis_tolerance = 0.1;
+        oc.absolute_z_axis_tolerance = 0.1;
+        oc.weight = 1.0;
+
+        const double min_height = pen_height - 0.012;
+        moveit_msgs::msg::PositionConstraint posc;
+        posc.link_name = move_group.getEndEffectorLink();  // e.g., "pencil_tip"
+        posc.header.frame_id = "fr3_link0";        // or "world" if you're using that as root
+        // Define bounding box volume: large in x/y, only upward in z from min_height
+        shape_msgs::msg::SolidPrimitive bound;
+        bound.type = shape_msgs::msg::SolidPrimitive::BOX;
+        bound.dimensions.resize(3);
+        bound.dimensions[0] = 10.0;               // x dimension (wide)
+        bound.dimensions[1] = 10.0;               // y dimension (wide)
+        bound.dimensions[2] = 10.0;                // z dimension (tall enough to allow motion)
+        geometry_msgs::msg::Pose region_pose;
+        region_pose.position.x = 0.0;
+        region_pose.position.y = 0.0;
+        region_pose.position.z = min_height + bound.dimensions[2] / 2.0;  // center of box
+        region_pose.orientation.w = 1.0;  // identity rotation
+        posc.constraint_region.primitives.push_back(bound);
+        posc.constraint_region.primitive_poses.push_back(region_pose);
+        posc.weight = 10000.0;
+
+        moveit_msgs::msg::Constraints pc;
+        pc.orientation_constraints.push_back(oc);
+        pc.position_constraints.push_back(posc);
+        move_group.setPathConstraints(pc);
+    };
+
     moveit::planning_interface::MoveGroupInterface mg(node, "fr3_arm");
-    mg.startStateMonitor();
-    mg.setPlanningTime(10);
-    mg.setMaxVelocityScalingFactor(0.15);
-    mg.setMaxAccelerationScalingFactor(0.15);
-    mg.setPoseReferenceFrame("fr3_link0");
-    mg.setEndEffectorLink("fr3_hand_tcp"); // default is 'fr3_link8' pencil_tip
-    // Constrain pencil to point down
-    moveit_msgs::msg::OrientationConstraint oc;
-    oc.link_name = mg.getEndEffectorLink();
-    oc.header.frame_id = "fr3_link0";
-    oc.orientation = vertical_orientation();
-    oc.absolute_x_axis_tolerance = 0.1;
-    oc.absolute_y_axis_tolerance = 0.1;
-    oc.absolute_z_axis_tolerance = 0.1;
-    oc.weight = 1.0;
-
-    const double min_height = pen_height - 0.012;
-    moveit_msgs::msg::PositionConstraint posc;
-    posc.link_name = mg.getEndEffectorLink();  // e.g., "pencil_tip"
-    posc.header.frame_id = "fr3_link0";        // or "world" if you're using that as root
-    // Define bounding box volume: large in x/y, only upward in z from min_height
-    shape_msgs::msg::SolidPrimitive bound;
-    bound.type = shape_msgs::msg::SolidPrimitive::BOX;
-    bound.dimensions.resize(3);
-    bound.dimensions[0] = 10.0;               // x dimension (wide)
-    bound.dimensions[1] = 10.0;               // y dimension (wide)
-    bound.dimensions[2] = 10.0;                // z dimension (tall enough to allow motion)
-    geometry_msgs::msg::Pose region_pose;
-    region_pose.position.x = 0.0;
-    region_pose.position.y = 0.0;
-    region_pose.position.z = min_height + bound.dimensions[2] / 2.0;  // center of box
-    region_pose.orientation.w = 1.0;  // identity rotation
-    posc.constraint_region.primitives.push_back(bound);
-    posc.constraint_region.primitive_poses.push_back(region_pose);
-    posc.weight = 10000.0;
-
-    moveit_msgs::msg::Constraints pc;
-    pc.orientation_constraints.push_back(oc);
-    pc.position_constraints.push_back(posc);
-    mg.setPathConstraints(pc);
+    configure_move_group(mg);
 
     auto stamp_and_execute = [&](moveit_msgs::msg::RobotTrajectory &traj,
                                 double v_scale = 0.15,
@@ -366,8 +370,47 @@ int main(int argc, char **argv)
 
         moveit::planning_interface::MoveGroupInterface::Plan plan;
         plan.trajectory_ = traj;
-        mg.execute(plan);
-        rclcpp::sleep_for(std::chrono::milliseconds(200));                
+
+        auto execute_with_timeout = [&](
+            int timeout_seconds)
+        {
+            std::atomic<bool> execution_finished(false);
+            std::atomic<bool> execution_started(false);
+
+            std::thread exec_thread([&] {
+                execution_started = true;
+                mg.execute(plan);  // blocking
+                execution_finished = true;
+            });
+            auto start_time = std::chrono::steady_clock::now();
+            while (!execution_finished &&
+                std::chrono::steady_clock::now() - start_time < std::chrono::seconds(timeout_seconds))
+            {
+                rclcpp::sleep_for(std::chrono::milliseconds(100));
+            }
+
+            if (!execution_finished && rclcpp::ok())
+            {
+                RCLCPP_ERROR(node->get_logger(), "Execution timeout exceeded. Relaunching MoveIt...");
+                mg.stop();
+
+                // Kill MoveIt and relaunch it
+                int ret = std::system("gnome-terminal -e \"ros2 launch franka_fr3_moveit_config moveit.launch.py robot_ip:=172.16.0.2\"");
+                exec_thread.detach();
+                return false;  // Timeout
+            }
+            exec_thread.join();
+            return true;
+        };
+
+        if (!execute_with_timeout(10)) {
+            rclcpp::sleep_for(std::chrono::milliseconds(20000));
+            mg = moveit::planning_interface::MoveGroupInterface(node, "fr3_arm");
+            configure_move_group(mg);
+        } else {
+            rclcpp::sleep_for(std::chrono::milliseconds(200));
+        }
+                        
     };
 
     cv::Mat img = cv::imread(IMAGE_PATH, cv::IMREAD_GRAYSCALE);

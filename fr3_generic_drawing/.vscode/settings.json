@@ -119,6 +119,9 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "__nullptr": "cpp",
+        "queue": "cpp",
+        "__node_handle": "cpp"
     }
 }

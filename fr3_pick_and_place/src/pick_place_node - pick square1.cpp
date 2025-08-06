@@ -135,7 +135,7 @@ void MTCTaskNode::setupPlanningScene()
     } else if (component_name == "hexagon1") {
       component.primitives.resize(1);
       component.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
-      component.primitives[0].dimensions = { 0.04, 0.04, 0.065 };       // x-y-z [m]
+      component.primitives[0].dimensions = { 0.04, 0.04, 0.65 };       // x-y-z [m]
     } else {
       throw std::invalid_argument("Unknown Object " + component_name + " To Set Structure");
     }
@@ -215,7 +215,7 @@ geometry_msgs::msg::PoseStamped MTCTaskNode::getComponentTargetPose(std::string 
   };
 
   std::map<std::string, std::array<int, 2>> coords = {
-    {"square1", {7, 8}}, // 7, 8
+    {"square1", {4, 7}},
     {"hexagon1", {9, 9}}
   };
 
@@ -231,7 +231,7 @@ geometry_msgs::msg::PoseStamped MTCTaskNode::getComponentTargetPose(std::string 
   tf2::Quaternion q;
   if (component_name == "square1") {
     if (orientations[component_name] == vertical) {
-      q.setRPY(0, 0,  - 45 * pi / 180 + pi / 90);
+      q.setRPY(0, 0,  - 45 * pi / 180);
     } else {
       q.setRPY(0, 0,  45 * pi / 180);
     }
@@ -248,8 +248,8 @@ geometry_msgs::msg::PoseStamped MTCTaskNode::getComponentTargetPose(std::string 
   q.normalize();
   pose.pose.orientation = tf2::toMsg(q);
 
-  pose.pose.position.x = 0.5026 - 0.001; // 0.5718 - (10 * 0.03) - (0.03 / 2) + (coords[component_name][1] * 0.03);
-  pose.pose.position.y = -0.0578 + 0.002;// -0.0142 + (6 * 0.03) - (0.03 / 1) - (coords[component_name][0] * 0.03);
+  pose.pose.position.x = 0.5718 - (9 * 0.03) + (coords[component_name][1] * 0.03);
+  pose.pose.position.y = -0.0142 + (7 * 0.03) - (0.03 / 2) - (coords[component_name][0] * 0.03);
   pose.pose.position.z = getBoundingBoxDimens(board_id)[2] + getBoundingBoxDimens(component_name)[2] / 2 + 0.002;
 
   return pose;
@@ -284,8 +284,8 @@ geometry_msgs::msg::PoseStamped MTCTaskNode::getComponentCurrentPose(std::string
       current_pose.header.stamp = node_->get_clock()->now();
 
       current_pose.pose.orientation.w = 1.0;
-      current_pose.pose.position.x = 0.4615; // 0.5113 - (getBoundingBoxDimens("square1")[0] / 2) - 0.015;
-      current_pose.pose.position.y = -0.3062; // -0.3064 + (getBoundingBoxDimens("square1")[1] / 2) - (0.0254 / 2);
+      current_pose.pose.position.x = 0.5113;
+      current_pose.pose.position.y = -0.3064 + (getBoundingBoxDimens("square1")[1] / 2) - (0.0254 / 2);
       current_pose.pose.position.z = (getBoundingBoxDimens("square1")[2] / 2) + 0.005;
   } else if (component_name == "hexagon1") {
       current_pose.header.frame_id = reference_link;
@@ -295,8 +295,8 @@ geometry_msgs::msg::PoseStamped MTCTaskNode::getComponentCurrentPose(std::string
       q.setRPY(0, 0, M_PI_4);
       q.normalize();
       current_pose.pose.orientation = tf2::toMsg(q);
-      current_pose.pose.position.x = 0.5113 + (getBoundingBoxDimens("hexagon1")[0] / 2) + 0.03;
-      current_pose.pose.position.y = -0.3064 - (getBoundingBoxDimens("hexagon1")[1] / 2) - (0.0254 / 2) - 0.03;
+      current_pose.pose.position.x = 0.5113 + (getBoundingBoxDimens("hexagon1")[0] / 2);
+      current_pose.pose.position.y = -0.3064 - (getBoundingBoxDimens("hexagon1")[1] / 2) - (0.0254 / 2);
       current_pose.pose.position.z = (getBoundingBoxDimens("hexagon1")[2] / 2) + 0.005;
   } else{ 
     throw std::invalid_argument("Unknown Object " + component_name + " To Find Current Pose");
@@ -346,7 +346,7 @@ mtc::Task MTCTaskNode::createTask()
     current_state_ptr = stage_state_current.get();
     pick_place_object->insert(std::move(stage_state_current));
 
-    auto factor = 0.05;
+    auto factor = 0.3;
 
     auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_);
     sampling_planner->setMaxVelocityScalingFactor(factor);
@@ -431,9 +431,9 @@ mtc::Task MTCTaskNode::createTask()
         Eigen::Isometry3d grasp_frame_transform;
         Eigen::Quaterniond q = Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()) *
                               Eigen::AngleAxisd(0, Eigen::Vector3d::UnitY()) *
-                              Eigen::AngleAxisd(M_PI / 2 + M_PI / 18, Eigen::Vector3d::UnitZ());
+                              Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ());
         grasp_frame_transform.linear() = q.matrix();
-        grasp_frame_transform.translation().z() = (getBoundingBoxDimens(component_name)[2] + 0.005) * 0.4;
+        grasp_frame_transform.translation().z() = getBoundingBoxDimens(component_name)[2] * 0.25;
 
         // Compute IK
         // clang-format off
@@ -467,7 +467,7 @@ mtc::Task MTCTaskNode::createTask()
       {
         auto stage = std::make_unique<mtc::stages::MoveTo>("close hand for " + component_name, interpolation_planner);
         stage->setGroup(hand_group_name);
-        float finger_position = 0;
+        float finger_position = (getBoundingBoxDimens(component_name)[0] / 2) - 0.015;
         stage->setGoal(std::map<std::string, double>{{"fr3_finger_joint1", finger_position}, {"fr3_finger_joint2", finger_position}});
         // stage->setGoal("close");
         grasp->insert(std::move(stage));

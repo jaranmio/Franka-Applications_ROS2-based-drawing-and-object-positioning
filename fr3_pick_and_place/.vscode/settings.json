@@ -90,7 +90,8 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "__nullptr": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/home/qpaig/ws_moveit2/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages",

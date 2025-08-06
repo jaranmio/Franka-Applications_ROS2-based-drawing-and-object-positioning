@@ -116,19 +116,40 @@ int main(int argc, char **argv)
         mg.execute(plan);
     };
 
-    geometry_msgs::msg::Pose pose;
-    pose.position.x = 0.515;
-    pose.position.y = -0.311;
-    pose.position.z = 0.215;
-    pose.orientation = vertical_orientation();
+    geometry_msgs::msg::Pose pose1;
+    pose1.position.x = 0.3;
+    pose1.position.y = 0;
+    pose1.position.z = 0.4;
+    pose1.orientation = vertical_orientation();
+    geometry_msgs::msg::Pose pose2;
+    pose2.position.x = 0.5;
+    pose2.position.y = 0;
+    pose2.position.z = 0.4;
+    pose2.orientation = vertical_orientation();
 
-    std::vector<geometry_msgs::msg::Pose> path = {mg.getCurrentPose().pose, pose};
+    geometry_msgs::msg::Pose  poses[] = {pose1, pose2};
+
+    RCLCPP_INFO(node->get_logger(), "STARTING CLOCK");
+    auto START = std::chrono::high_resolution_clock::now(); // start clock
+    long long int c = 0;
+
+    while (true)
+    {
+        std::vector<geometry_msgs::msg::Pose> path = {mg.getCurrentPose().pose, poses[c%2]};
         moveit_msgs::msg::RobotTrajectory traj;
         double start_frac = mg.computeCartesianPath(path, 0.01, 0.0, traj);
         if (start_frac >= 0.95)
         {
             stamp_and_execute(traj);
         }
+
+        double ELAPSED_TIME_SECS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - START).count();
+
+        RCLCPP_INFO(node->get_logger(), ("MOTION NUMBER: " + std::to_string(c)).c_str());
+        RCLCPP_INFO(node->get_logger(), ("SECONDS ELAPSED: " + std::to_string(ELAPSED_TIME_SECS) + "s").c_str());
+
+        c++;
+    }
 
     rclcpp::shutdown();
 

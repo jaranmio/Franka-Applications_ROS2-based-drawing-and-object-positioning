@@ -29,17 +29,13 @@ namespace mtc = moveit::task_constructor;
 using GraspAction = franka_msgs::action::Grasp;
 using GraspGoalHandle = rclcpp_action::ClientGoalHandle<GraspAction>;
 
-const auto pi = 3.1415926535897932384626434;
 const auto& arm_group_name = "fr3_arm";
 const auto& hand_group_name = "hand";
 const auto& tcp_frame = "fr3_hand_tcp";
 const auto& hand_frame = "fr3_hand";
 const auto& reference_link = "fr3_link0"; // absolute reference for 'world' coordinate system
-const auto& board_id = "board";
-const auto& holder_id = "holder";
 const std::string COMPONENTS[] = {
-  "square1",
-  //"hexagon1"
+  "object"
 };
 
 class MTCTaskNode
@@ -81,63 +77,13 @@ void MTCTaskNode::setupPlanningScene()
 {
   moveit::planning_interface::PlanningSceneInterface psi;
 
-  auto setupBoard = [&]() {
-    moveit_msgs::msg::CollisionObject board;
-    board.id = board_id;
-    board.header.frame_id = reference_link;
-
-    board.primitives.resize(1);
-    board.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
-    board.primitives[0].dimensions = { 0.37, 0.22, 0.011 };       // x-y-z [m] { 0.57, 0.42, 0.011 }
-
-    geometry_msgs::msg::Pose pose;
-    pose.orientation.w = 1.0;
-    pose.position.x = 0.5718;
-    pose.position.y = -0.0142;
-    pose.position.z = 0.011 / 2;
-    board.pose = pose;
-
-    psi.applyCollisionObject(board);
-  };
-
-  auto setupHolder = [&]() {
-    moveit_msgs::msg::CollisionObject holder;
-    holder.id = holder_id;
-    holder.header.frame_id = reference_link;
-
-    holder.primitives.resize(1);
-    holder.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
-    holder.primitives[0].dimensions = { 0.058, 0.02, 0.02 };       // x-y-z [m]
-
-    geometry_msgs::msg::Pose pose;
-    pose.orientation.w = 1.0;
-    pose.position.x = 0.5113;
-    pose.position.y = -0.3064;
-    pose.position.z = 0.02 / 2;
-    holder.pose = pose;
-
-    psi.applyCollisionObject(holder);
-  };
-
-  setupBoard();
-  setupHolder();
-
-  // Setup optical components
   auto setComponentStructure = [](std::string component_name, moveit_msgs::msg::CollisionObject& component) {
     if (component_name == "object") {
       component.primitives.resize(1);
       component.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
       component.primitives[0].dimensions = { 0.06, 0.06, 0.1 };       // x-y-z [m]
-    } else if (component_name == "square1") {
-      component.primitives.resize(1);
-      component.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
-      component.primitives[0].dimensions = { 0.04, 0.04, 0.065 };       // x-y-z [m]
-    } else if (component_name == "hexagon1") {
-      component.primitives.resize(1);
-      component.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
-      component.primitives[0].dimensions = { 0.04, 0.04, 0.065 };       // x-y-z [m]
     } else {
-      throw std::invalid_argument("Unknown Object " + component_name + " To Set Structure");
+      throw std::invalid_argument("Unknown Object " + component_name + " To Find Current Pose");
     }
 
   };
@@ -209,51 +155,6 @@ geometry_msgs::msg::Quaternion vertical_orientation() {
 }
 
 geometry_msgs::msg::PoseStamped MTCTaskNode::getComponentTargetPose(std::string component_name) {
-  enum ROTATION {
-    vertical,
-    horizontal
-  };
-
-  std::map<std::string, std::array<int, 2>> coords = {
-    {"square1", {7, 8}}, // 7, 8
-    {"hexagon1", {9, 9}}
-  };
-
-  std::map<std::string, ROTATION> orientations = {
-    {"square1", vertical},
-    {"hexagon1", horizontal}
-  };
-
-  geometry_msgs::msg::PoseStamped pose;
-  pose.header.frame_id = reference_link;
-  pose.header.stamp = node_->get_clock()->now();
-
-  tf2::Quaternion q;
-  if (component_name == "square1") {
-    if (orientations[component_name] == vertical) {
-      q.setRPY(0, 0,  - 45 * pi / 180 + pi / 90);
-    } else {
-      q.setRPY(0, 0,  45 * pi / 180);
-    }
-  } else if (component_name == "hexagon1") {
-    if (orientations[component_name] == vertical) {
-      q.setRPY(0, 0, - 90 * pi / 180);
-    } else {
-      q.setRPY(0, 0, 90 * pi / 180);
-    }
-  } else{ 
-    throw std::invalid_argument("Unknown Object " + component_name + " To Find Target Pose");
-  }
-
-  q.normalize();
-  pose.pose.orientation = tf2::toMsg(q);
-
-  pose.pose.position.x = 0.5026 - 0.001; // 0.5718 - (10 * 0.03) - (0.03 / 2) + (coords[component_name][1] * 0.03);
-  pose.pose.position.y = -0.0578 + 0.002;// -0.0142 + (6 * 0.03) - (0.03 / 1) - (coords[component_name][0] * 0.03);
-  pose.pose.position.z = getBoundingBoxDimens(board_id)[2] + getBoundingBoxDimens(component_name)[2] / 2 + 0.002;
-
-  return pose;
-
   std::string target_frame_name = "target_" + component_name + "_frame";
   geometry_msgs::msg::TransformStamped target_pose_tf = buffer_->lookupTransform(reference_link, target_frame_name, rclcpp::Time(0));
 
@@ -279,25 +180,6 @@ geometry_msgs::msg::PoseStamped MTCTaskNode::getComponentCurrentPose(std::string
     current_pose.pose.position.x = 0.50;
     current_pose.pose.position.y = -0.25;
     current_pose.pose.position.z = 0.1 / 2.0;
-  } else if (component_name == "square1") {
-      current_pose.header.frame_id = reference_link;
-      current_pose.header.stamp = node_->get_clock()->now();
-
-      current_pose.pose.orientation.w = 1.0;
-      current_pose.pose.position.x = 0.4615; // 0.5113 - (getBoundingBoxDimens("square1")[0] / 2) - 0.015;
-      current_pose.pose.position.y = -0.3062; // -0.3064 + (getBoundingBoxDimens("square1")[1] / 2) - (0.0254 / 2);
-      current_pose.pose.position.z = (getBoundingBoxDimens("square1")[2] / 2) + 0.005;
-  } else if (component_name == "hexagon1") {
-      current_pose.header.frame_id = reference_link;
-      current_pose.header.stamp = node_->get_clock()->now();
-
-      tf2::Quaternion q;
-      q.setRPY(0, 0, M_PI_4);
-      q.normalize();
-      current_pose.pose.orientation = tf2::toMsg(q);
-      current_pose.pose.position.x = 0.5113 + (getBoundingBoxDimens("hexagon1")[0] / 2) + 0.03;
-      current_pose.pose.position.y = -0.3064 - (getBoundingBoxDimens("hexagon1")[1] / 2) - (0.0254 / 2) - 0.03;
-      current_pose.pose.position.z = (getBoundingBoxDimens("hexagon1")[2] / 2) + 0.005;
   } else{ 
     throw std::invalid_argument("Unknown Object " + component_name + " To Find Current Pose");
   }
@@ -309,14 +191,6 @@ geometry_msgs::msg::PoseStamped MTCTaskNode::getComponentCurrentPose(std::string
 std::array<float, 3> MTCTaskNode::getBoundingBoxDimens(std::string component_name) {
   if (component_name == "object") {
       return { 0.06, 0.06, 0.1 };
-  } else if (component_name == "square1") {
-    return { 0.04, 0.04, 0.065 };
-  } else if (component_name == "hexagon1") {
-    return { 0.04, 0.04, 0.065 };
-  } else if (component_name == board_id) {
-    return { 0.57, 0.42, 0.011 };
-  } else if (component_name == holder_id) {
-    return { 0.158, 0.12, 0.02 };
   }
 
   throw std::invalid_argument("Unknown Object " + component_name + " To Find Dimensions");
@@ -346,19 +220,12 @@ mtc::Task MTCTaskNode::createTask()
     current_state_ptr = stage_state_current.get();
     pick_place_object->insert(std::move(stage_state_current));
 
-    auto factor = 0.05;
-
     auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_);
-    sampling_planner->setMaxVelocityScalingFactor(factor);
-    sampling_planner->setMaxAccelerationScalingFactor(factor);
-
     auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
-    interpolation_planner->setMaxVelocityScalingFactor(factor);
-    interpolation_planner->setMaxAccelerationScalingFactor(factor);
 
     auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
-    cartesian_planner->setMaxVelocityScalingFactor(factor);
-    cartesian_planner->setMaxAccelerationScalingFactor(factor);
+    cartesian_planner->setMaxVelocityScalingFactor(1.0);
+    cartesian_planner->setMaxAccelerationScalingFactor(1.0);
     cartesian_planner->setStepSize(.0001);
 
     // clang-format off
@@ -366,8 +233,7 @@ mtc::Task MTCTaskNode::createTask()
         std::make_unique<mtc::stages::MoveTo>("open hand for " + component_name, interpolation_planner);
     // clang-format on
     stage_open_hand->setGroup(hand_group_name);
-    auto open_finger_pos = 0.035;
-    stage_open_hand->setGoal(std::map<std::string, double>{{"fr3_finger_joint1", open_finger_pos}, {"fr3_finger_joint2", open_finger_pos}});
+    stage_open_hand->setGoal("open");
     stage_open_hand->setTimeout(35.0);
     pick_place_object->insert(std::move(stage_open_hand));
 
@@ -404,7 +270,7 @@ mtc::Task MTCTaskNode::createTask()
         stage->properties().set("marker_ns", "approach_" + component_name);
         stage->properties().set("link", tcp_frame);
         stage->properties().configureInitFrom(mtc::Stage::PARENT, { "group" });
-        stage->setMinMaxDistance(0.14, 0.19);
+        stage->setMinMaxDistance(0.1, 0.15);
 
         // Set hand downwards direction
         geometry_msgs::msg::Vector3Stamped vec;
@@ -424,16 +290,16 @@ mtc::Task MTCTaskNode::createTask()
         stage->properties().set("marker_ns", "grasp_pose_" + component_name);
         stage->setPreGraspPose("open");
         stage->setObject(component_name);
-        stage->setAngleDelta(M_PI / 1000);
+        stage->setAngleDelta(M_PI / 12);
         stage->setMonitoredStage(current_state_ptr);  // Hook into current state
 
-        // This is the transform from the object frame to the end-effector frame.
+        // This is the transform from the object frame to the end-effector frame. Pose of object frame relative to end effector frame
         Eigen::Isometry3d grasp_frame_transform;
         Eigen::Quaterniond q = Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()) *
                               Eigen::AngleAxisd(0, Eigen::Vector3d::UnitY()) *
-                              Eigen::AngleAxisd(M_PI / 2 + M_PI / 18, Eigen::Vector3d::UnitZ());
+                              Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ());
         grasp_frame_transform.linear() = q.matrix();
-        grasp_frame_transform.translation().z() = (getBoundingBoxDimens(component_name)[2] + 0.005) * 0.4;
+        grasp_frame_transform.translation().z() = 0.1 * 0.22;
 
         // Compute IK
         // clang-format off
@@ -451,14 +317,11 @@ mtc::Task MTCTaskNode::createTask()
       {
         // clang-format off
         auto stage =
-            std::make_unique<mtc::stages::ModifyPlanningScene>("allow collision (hand," + component_name + ")" + ", (holder, )" + component_name + ")");
+            std::make_unique<mtc::stages::ModifyPlanningScene>("allow collision (hand," + component_name + ")");
         stage->allowCollisions(component_name,
                               task.getRobotModel()
                                   ->getJointModelGroup(hand_group_name)
                                   ->getLinkModelNamesWithCollisionGeometry(),
-                              true);
-        stage->allowCollisions(component_name,
-                              holder_id,
                               true);
         // clang-format on
         grasp->insert(std::move(stage));
@@ -467,7 +330,7 @@ mtc::Task MTCTaskNode::createTask()
       {
         auto stage = std::make_unique<mtc::stages::MoveTo>("close hand for " + component_name, interpolation_planner);
         stage->setGroup(hand_group_name);
-        float finger_position = 0;
+        float finger_position = (getBoundingBoxDimens(component_name)[0] / 2) - 0.01;
         stage->setGoal(std::map<std::string, double>{{"fr3_finger_joint1", finger_position}, {"fr3_finger_joint2", finger_position}});
         // stage->setGoal("close");
         grasp->insert(std::move(stage));
@@ -497,18 +360,6 @@ mtc::Task MTCTaskNode::createTask()
         stage->setDirection(vec);
         grasp->insert(std::move(stage));
       }
-
-      {
-        // clang-format off
-        auto stage =
-            std::make_unique<mtc::stages::ModifyPlanningScene>("forbid collision (holder," + component_name + ")");
-        stage->allowCollisions(component_name,
-                              board_id,
-                              false);
-        // clang-format on
-        grasp->insert(std::move(stage));
-      }
-
       pick_place_object->insert(std::move(grasp));
     }
 
@@ -529,18 +380,6 @@ mtc::Task MTCTaskNode::createTask()
       // clang-format off
       place->properties().configureInitFrom(mtc::Stage::PARENT,
                                             { "eef", "group", "ik_frame" });
-        
-      {
-        // clang-format off
-        auto stage =
-            std::make_unique<mtc::stages::ModifyPlanningScene>("allow collision (eef," + component_name + " - board)" + "& ( board," + component_name + ")" );
-        stage->allowCollisions(board_id,
-                              component_name,
-                              true);
-        // clang-format on
-        place->insert(std::move(stage));
-      }
-
       // clang-format on
 
       /****************************************************
@@ -561,7 +400,7 @@ mtc::Task MTCTaskNode::createTask()
         auto wrapper =
             std::make_unique<mtc::stages::ComputeIK>("place pose IK " + component_name, std::move(stage));
         // clang-format on
-        wrapper->setMaxIKSolutions(5);
+        wrapper->setMaxIKSolutions(2);
         wrapper->setMinSolutionDistance(1.0);
         wrapper->setIKFrame(component_name);
         wrapper->properties().configureInitFrom(mtc::Stage::PARENT, { "eef", "group" });
@@ -579,11 +418,11 @@ mtc::Task MTCTaskNode::createTask()
       {
         // clang-format off
         auto stage =
-            std::make_unique<mtc::stages::ModifyPlanningScene>("forbid collision (eef," + component_name + " - board)");
-        stage->allowCollisions(task.getRobotModel()
+            std::make_unique<mtc::stages::ModifyPlanningScene>("forbid collision (hand," + component_name + ")");
+        stage->allowCollisions(component_name,
+                              task.getRobotModel()
                                   ->getJointModelGroup(hand_group_name)
                                   ->getLinkModelNamesWithCollisionGeometry(),
-                              {board_id, component_name},
                               false);
         // clang-format on
         place->insert(std::move(stage));

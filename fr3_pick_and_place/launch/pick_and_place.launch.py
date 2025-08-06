@@ -47,6 +47,10 @@ def generate_launch_description():
 
     moveit_config = (
         MoveItConfigsBuilder("fr3", package_name="fr3_moveit_config")
+        .planning_pipelines(
+            pipelines=["isaac_ros_cumotion", "ompl", "pilz_industrial_motion_planner"],
+            default_planning_pipeline="isaac_ros_cumotion",
+        )
         .to_moveit_configs()
     )
 
@@ -60,7 +64,6 @@ def generate_launch_description():
             {
             # "robot_description": os.environ.get("ROBOT_DESCRIPTION", ""),
             # "robot_description_semantic": os.environ.get("ROBOT_DESCRIPTION_SEMANTIC", ""),
-            "use_sim_time": True,
             'planning': True
         }],
     )
