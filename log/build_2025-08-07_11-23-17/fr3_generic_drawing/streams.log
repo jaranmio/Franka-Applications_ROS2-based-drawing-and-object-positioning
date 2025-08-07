@@ -1,0 +1,100 @@
+[0.026s] Invoking command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake /home/qpaig/my_ros2_ws/src/fr3_generic_drawing -DCMAKE_BUILD_TYPE=Release -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing
+[0.144s] -- The C compiler identification is GNU 11.4.0
+[0.237s] -- The CXX compiler identification is GNU 11.4.0
+[0.249s] -- Detecting C compiler ABI info
+[0.400s] -- Detecting C compiler ABI info - done
+[0.411s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.411s] -- Detecting C compile features
+[0.412s] -- Detecting C compile features - done
+[0.415s] -- Detecting CXX compiler ABI info
+[0.582s] -- Detecting CXX compiler ABI info - done
+[0.590s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.590s] -- Detecting CXX compile features
+[0.591s] -- Detecting CXX compile features - done
+[0.606s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.886s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.985s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.165s] -- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)
+[1.285s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.304s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.329s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.367s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.422s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.584s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.604s] -- Found rmw_cyclonedds_cpp: 1.3.4 (/opt/ros/humble/share/rmw_cyclonedds_cpp/cmake)
+[1.701s] -- Using RMW implementation 'rmw_cyclonedds_cpp' as default
+[1.745s] -- Looking for pthread.h
+[1.902s] -- Looking for pthread.h - found
+[1.902s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[2.054s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[2.055s] -- Found Threads: TRUE  
+[2.151s] -- Found OpenCV: /usr (found version "4.5.4") 
+[2.163s] -- Found tf2_geometry_msgs: 0.25.13 (/opt/ros/humble/share/tf2_geometry_msgs/cmake)
+[2.249s] -- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)
+[2.251s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[2.251s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[2.500s] -- Found moveit_ros_planning_interface: 2.5.9 (/home/qpaig/ws_moveit2/install/moveit_ros_planning_interface/share/moveit_ros_planning_interface/cmake)
+[2.610s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found version "1.74.0") found components: date_time filesystem program_options system thread 
+[2.894s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found version "1.74.0") found components: chrono date_time filesystem iostreams program_options regex serialization system thread 
+[3.044s] -- Found parameter_traits: 0.5.0 (/opt/ros/humble/share/parameter_traits/cmake)
+[3.100s] -- Found rclcpp_lifecycle: 16.0.12 (/opt/ros/humble/share/rclcpp_lifecycle/cmake)
+[3.164s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found version "1.74.0") found components: filesystem 
+[3.426s] -- library: /usr/lib/x86_64-linux-gnu/libcurl.so
+[3.637s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found version "1.74.0") found components: system filesystem date_time program_options thread chrono 
+[3.670s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found version "1.74.0") found components: thread system filesystem regex date_time program_options 
+[3.872s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found version "1.74.0") found components: system filesystem date_time program_options thread 
+[3.912s] -- Found yaml_cpp_vendor: 8.0.2 (/opt/ros/humble/share/yaml_cpp_vendor/cmake)
+[3.982s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[4.398s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[4.398s] -- Configured cppcheck include dirs: 
+[4.398s] -- Configured cppcheck exclude dirs and/or files: 
+[4.429s] -- Added test 'flake8' to check Python code syntax and style conventions
+[4.489s] -- Added test 'lint_cmake' to check CMake code style
+[4.519s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[4.747s] -- Added test 'uncrustify' to check C / C++ code style
+[4.747s] -- Configured uncrustify additional arguments: 
+[4.773s] -- Added test 'xmllint' to check XML markup files
+[4.777s] -- Configuring done
+[4.845s] -- Generating done
+[4.860s] -- Build files have been written to: /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing
+[4.874s] Invoked command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake /home/qpaig/my_ros2_ws/src/fr3_generic_drawing -DCMAKE_BUILD_TYPE=Release -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing
+[4.876s] Invoking command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing -- -j88 -l88
+[4.971s] [35m[1mConsolidate compiler generated dependencies of target repeat_test[0m
+[4.977s] [35m[1mConsolidate compiler generated dependencies of target draw_image[0m
+[4.978s] [35m[1mConsolidate compiler generated dependencies of target draw_image_vector[0m
+[5.015s] [ 33%] Built target repeat_test
+[5.022s] [ 66%] Built target draw_image_vector
+[5.025s] [ 83%] [32mBuilding CXX object CMakeFiles/draw_image.dir/src/draw_image.cpp.o[0m
+[9.389s] [01m[K/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/draw_image.cpp:[m[K In lambda function:
+[9.390s] [01m[K/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/src/draw_image.cpp:398:21:[m[K [01;35m[Kwarning: [m[Kunused variable ‘[01m[Kret[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Wunused-variable]8;;[m[K]
+[9.390s]   398 |                 int [01;35m[Kret[m[K = std::system("gnome-terminal -e \"ros2 launch franka_fr3_moveit_config moveit.launch.py robot_ip:=172.16.0.2\"");
+[9.390s]       |                     [01;35m[K^~~[m[K
+[13.567s] [100%] [32m[1mLinking CXX executable draw_image[0m
+[14.019s] [100%] Built target draw_image
+[14.040s] Invoked command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing -- -j88 -l88
+[14.061s] Invoking command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing
+[14.078s] -- Install configuration: "Release"
+[14.079s] -- Execute custom install script
+[14.079s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib/fr3_generic_drawing/draw_image
+[14.079s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib/fr3_generic_drawing/draw_image_vector
+[14.079s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib/fr3_generic_drawing/repeat_test
+[14.080s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/launch/data.json
+[14.080s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/launch/draw_image.launch.py
+[14.080s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/launch/draw_image_vector.launch.py
+[14.080s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/launch/test.launch.py
+[14.080s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/ament_index/resource_index/package_run_dependencies/fr3_generic_drawing
+[14.080s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/ament_index/resource_index/parent_prefix_path/fr3_generic_drawing
+[14.080s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/environment/ament_prefix_path.sh
+[14.081s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/environment/ament_prefix_path.dsv
+[14.081s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/environment/path.sh
+[14.081s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/environment/path.dsv
+[14.081s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/local_setup.bash
+[14.081s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/local_setup.sh
+[14.081s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/local_setup.zsh
+[14.081s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/local_setup.dsv
+[14.081s] -- Symlinking: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.dsv
+[14.098s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/ament_index/resource_index/packages/fr3_generic_drawing
+[14.099s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/cmake/fr3_generic_drawingConfig.cmake
+[14.099s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/cmake/fr3_generic_drawingConfig-version.cmake
+[14.099s] -- Up-to-date symlink: /home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.xml
+[14.102s] Invoked command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing

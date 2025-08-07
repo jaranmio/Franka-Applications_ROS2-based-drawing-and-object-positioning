@@ -1,0 +1,264 @@
+[0.180s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install', '--cmake-args', '-DCMAKE_BUILD_TYPE=Release', '--cmake-clean-cache', '--packages-select', 'fr3_generic_drawing']
+[0.180s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=88, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=['fr3_generic_drawing'], packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=['-DCMAKE_BUILD_TYPE=Release'], cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=True, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x7fa051793430>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7fa051744cd0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7fa051744cd0>>, mixin_verb=('build',))
+[0.424s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.424s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.424s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.424s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.424s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.424s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.424s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/qpaig/my_ros2_ws/src'
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.424s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.444s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.444s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.444s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.444s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extensions ['ignore', 'ignore_ament_install']
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extension 'ignore'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extension 'ignore_ament_install'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extensions ['colcon_pkg']
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extension 'colcon_pkg'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extensions ['colcon_meta']
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extension 'colcon_meta'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extensions ['ros']
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extension 'ros'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extensions ['cmake', 'python']
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extension 'cmake'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extension 'python'
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extensions ['python_setup_py']
+[0.445s] Level 1:colcon.colcon_core.package_identification:_identify(fr3) by extension 'python_setup_py'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extensions ['ignore', 'ignore_ament_install']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extension 'ignore'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extension 'ignore_ament_install'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extensions ['colcon_pkg']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extension 'colcon_pkg'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extensions ['colcon_meta']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extension 'colcon_meta'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extensions ['ros']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extension 'ros'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extensions ['cmake', 'python']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extension 'cmake'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extension 'python'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extensions ['python_setup_py']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/configuration) by extension 'python_setup_py'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extensions ['ignore', 'ignore_ament_install']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extension 'ignore'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extension 'ignore_ament_install'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extensions ['colcon_pkg']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extension 'colcon_pkg'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extensions ['colcon_meta']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extension 'colcon_meta'
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extensions ['ros']
+[0.446s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extension 'ros'
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extensions ['cmake', 'python']
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extension 'cmake'
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extension 'python'
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extensions ['python_setup_py']
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3/fr3_test) by extension 'python_setup_py'
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extensions ['ignore', 'ignore_ament_install']
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extension 'ignore'
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extension 'ignore_ament_install'
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extensions ['colcon_pkg']
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extension 'colcon_pkg'
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extensions ['colcon_meta']
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extension 'colcon_meta'
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extensions ['ros']
+[0.447s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_generic_drawing) by extension 'ros'
+[0.450s] DEBUG:colcon.colcon_core.package_identification:Package 'fr3_generic_drawing' with type 'ros.ament_cmake' and name 'fr3_generic_drawing'
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extensions ['ignore', 'ignore_ament_install']
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extension 'ignore'
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extension 'ignore_ament_install'
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extensions ['colcon_pkg']
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extension 'colcon_pkg'
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extensions ['colcon_meta']
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extension 'colcon_meta'
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extensions ['ros']
+[0.451s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_mathematical_drawing) by extension 'ros'
+[0.452s] DEBUG:colcon.colcon_core.package_identification:Package 'fr3_mathematical_drawing' with type 'ros.ament_cmake' and name 'fr3_mathematical_drawing'
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extensions ['ignore', 'ignore_ament_install']
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extension 'ignore'
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extension 'ignore_ament_install'
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extensions ['colcon_pkg']
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extension 'colcon_pkg'
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extensions ['colcon_meta']
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extension 'colcon_meta'
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extensions ['ros']
+[0.452s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_moveit_config) by extension 'ros'
+[0.453s] DEBUG:colcon.colcon_core.package_identification:Package 'fr3_moveit_config' with type 'ros.ament_cmake' and name 'fr3_moveit_config'
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extensions ['ignore', 'ignore_ament_install']
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extension 'ignore'
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extension 'ignore_ament_install'
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extensions ['colcon_pkg']
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extension 'colcon_pkg'
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extensions ['colcon_meta']
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extension 'colcon_meta'
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extensions ['ros']
+[0.453s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pencil_logger) by extension 'ros'
+[0.454s] DEBUG:colcon.colcon_core.package_identification:Package 'fr3_pencil_logger' with type 'ros.ament_python' and name 'fr3_pencil_logger'
+[0.454s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extensions ['ignore', 'ignore_ament_install']
+[0.454s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extension 'ignore'
+[0.455s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extension 'ignore_ament_install'
+[0.455s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extensions ['colcon_pkg']
+[0.455s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extension 'colcon_pkg'
+[0.455s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extensions ['colcon_meta']
+[0.455s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extension 'colcon_meta'
+[0.455s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extensions ['ros']
+[0.455s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_pick_and_place) by extension 'ros'
+[0.456s] DEBUG:colcon.colcon_core.package_identification:Package 'fr3_pick_and_place' with type 'ros.ament_cmake' and name 'fr3_pick_and_place'
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extensions ['ignore', 'ignore_ament_install']
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extension 'ignore'
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extension 'ignore_ament_install'
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extensions ['colcon_pkg']
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extension 'colcon_pkg'
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extensions ['colcon_meta']
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extension 'colcon_meta'
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extensions ['ros']
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(fr3_test) by extension 'ros'
+[0.456s] DEBUG:colcon.colcon_core.package_identification:Package 'fr3_test' with type 'ros.ament_python' and name 'fr3_test'
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extensions ['ignore', 'ignore_ament_install']
+[0.456s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extension 'ignore'
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extension 'ignore_ament_install'
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extensions ['colcon_pkg']
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extension 'colcon_pkg'
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extensions ['colcon_meta']
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extension 'colcon_meta'
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extensions ['ros']
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(franka_gripper_proxy) by extension 'ros'
+[0.457s] DEBUG:colcon.colcon_core.package_identification:Package 'franka_gripper_proxy' with type 'ros.ament_python' and name 'franka_gripper_proxy'
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extensions ['ignore', 'ignore_ament_install']
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extension 'ignore'
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extension 'ignore_ament_install'
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extensions ['colcon_pkg']
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extension 'colcon_pkg'
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extensions ['colcon_meta']
+[0.457s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extension 'colcon_meta'
+[0.458s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extensions ['ros']
+[0.458s] Level 1:colcon.colcon_core.package_identification:_identify(ground_truth_publisher) by extension 'ros'
+[0.459s] DEBUG:colcon.colcon_core.package_identification:Package 'ground_truth_publisher' with type 'ros.ament_python' and name 'ground_truth_publisher'
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extensions ['ignore', 'ignore_ament_install']
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extension 'ignore'
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extension 'ignore_ament_install'
+[0.460s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extensions ['colcon_pkg']
+[0.460s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extension 'colcon_pkg'
+[0.460s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extensions ['colcon_meta']
+[0.460s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extension 'colcon_meta'
+[0.460s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extensions ['ros']
+[0.460s] Level 1:colcon.colcon_core.package_identification:_identify(position_calibration) by extension 'ros'
+[0.461s] DEBUG:colcon.colcon_core.package_identification:Package 'position_calibration' with type 'ros.ament_cmake' and name 'position_calibration'
+[0.461s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.461s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.461s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.461s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.461s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.488s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'fr3_mathematical_drawing' in 'fr3_mathematical_drawing'
+[0.488s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'fr3_moveit_config' in 'fr3_moveit_config'
+[0.488s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'fr3_pencil_logger' in 'fr3_pencil_logger'
+[0.488s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'fr3_pick_and_place' in 'fr3_pick_and_place'
+[0.488s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'fr3_test' in 'fr3_test'
+[0.488s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'franka_gripper_proxy' in 'franka_gripper_proxy'
+[0.488s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'ground_truth_publisher' in 'ground_truth_publisher'
+[0.488s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'position_calibration' in 'position_calibration'
+[0.489s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.489s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.495s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 9 installed packages in /home/qpaig/isaac_ros-dev/install
+[0.496s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 3 installed packages in /home/qpaig/ws_realsense/install
+[0.496s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 9 installed packages in /home/qpaig/my_ros2_ws/install
+[0.496s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 13 installed packages in /home/qpaig/franka_ros2_ws/install
+[0.497s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 10 installed packages in /home/qpaig/IsaacSim-ros_workspaces/humble_ws/install
+[0.498s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 55 installed packages in /home/qpaig/ws_moveit2/install
+[0.500s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 433 installed packages in /opt/ros/humble
+[0.503s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'cmake_args' from command line to '['-DCMAKE_BUILD_TYPE=Release']'
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'cmake_target' from command line to 'None'
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'cmake_clean_cache' from command line to 'True'
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'cmake_clean_first' from command line to 'False'
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'cmake_force_configure' from command line to 'False'
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'ament_cmake_args' from command line to 'None'
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'catkin_cmake_args' from command line to 'None'
+[0.575s] Level 5:colcon.colcon_core.verb:set package 'fr3_generic_drawing' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.575s] DEBUG:colcon.colcon_core.verb:Building package 'fr3_generic_drawing' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DCMAKE_BUILD_TYPE=Release'], 'cmake_clean_cache': True, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing', 'merge_install': False, 'path': '/home/qpaig/my_ros2_ws/src/fr3_generic_drawing', 'symlink_install': True, 'test_result_base': None}
+[0.575s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.577s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.577s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/qpaig/my_ros2_ws/src/fr3_generic_drawing' with build type 'ament_cmake'
+[0.577s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/qpaig/my_ros2_ws/src/fr3_generic_drawing'
+[0.582s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.582s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.582s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.611s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake /home/qpaig/my_ros2_ws/src/fr3_generic_drawing -DCMAKE_BUILD_TYPE=Release -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing
+[6.250s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake /home/qpaig/my_ros2_ws/src/fr3_generic_drawing -DCMAKE_BUILD_TYPE=Release -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing
+[6.253s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing -- -j88 -l88
+[16.456s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --build /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing -- -j88 -l88
+[16.476s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing
+[16.874s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(fr3_generic_drawing)
+[16.876s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/qpaig/my_ros2_ws/install/ground_truth_publisher:/home/qpaig/my_ros2_ws/install/franka_gripper_proxy:/home/qpaig/my_ros2_ws/install/fr3_test:/home/qpaig/my_ros2_ws/install/fr3_pencil_logger:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_examples:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_robot_description:/home/qpaig/isaac_ros-dev/install/isaac_ros_cumotion_python_utils:/home/qpaig/isaac_ros-dev/install/curobo_core:/home/qpaig/IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal:/home/qpaig/ws_moveit2/install/moveit_configs_utils:/home/qpaig/ws_moveit2/install/launch_param_builder:/opt/ros/humble /usr/bin/cmake --install /home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing
+[16.880s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing' for CMake module files
+[16.881s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing' for CMake config files
+[16.881s] Level 1:colcon.colcon_core.shell:create_environment_hook('fr3_generic_drawing', 'cmake_prefix_path')
+[16.881s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/hook/cmake_prefix_path.ps1'
+[16.882s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/hook/cmake_prefix_path.dsv'
+[16.882s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/hook/cmake_prefix_path.sh'
+[16.883s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib'
+[16.883s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/bin'
+[16.883s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib/pkgconfig/fr3_generic_drawing.pc'
+[16.883s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib/python3.10/site-packages'
+[16.884s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/bin'
+[16.884s] INFO:colcon.colcon_core.shell:Creating package script '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.ps1'
+[16.884s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.dsv'
+[16.885s] INFO:colcon.colcon_core.shell:Creating package script '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.sh'
+[16.886s] INFO:colcon.colcon_core.shell:Creating package script '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.bash'
+[16.886s] INFO:colcon.colcon_core.shell:Creating package script '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.zsh'
+[16.887s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/colcon-core/packages/fr3_generic_drawing)
+[16.887s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(fr3_generic_drawing)
+[16.888s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing' for CMake module files
+[16.888s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing' for CMake config files
+[16.888s] Level 1:colcon.colcon_core.shell:create_environment_hook('fr3_generic_drawing', 'cmake_prefix_path')
+[16.888s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/hook/cmake_prefix_path.ps1'
+[16.888s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/hook/cmake_prefix_path.dsv'
+[16.889s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/hook/cmake_prefix_path.sh'
+[16.889s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib'
+[16.889s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/bin'
+[16.889s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib/pkgconfig/fr3_generic_drawing.pc'
+[16.889s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/lib/python3.10/site-packages'
+[16.889s] Level 1:colcon.colcon_core.environment:checking '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/bin'
+[16.890s] INFO:colcon.colcon_core.shell:Creating package script '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.ps1'
+[16.890s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.dsv'
+[16.891s] INFO:colcon.colcon_core.shell:Creating package script '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.sh'
+[16.891s] INFO:colcon.colcon_core.shell:Creating package script '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.bash'
+[16.892s] INFO:colcon.colcon_core.shell:Creating package script '/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/fr3_generic_drawing/package.zsh'
+[16.892s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/qpaig/my_ros2_ws/src/install/fr3_generic_drawing/share/colcon-core/packages/fr3_generic_drawing)
+[16.892s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[16.892s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[16.893s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[16.893s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[16.901s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[16.901s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[16.901s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[16.918s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[16.919s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/qpaig/my_ros2_ws/src/install/local_setup.ps1'
+[16.920s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/qpaig/my_ros2_ws/src/install/_local_setup_util_ps1.py'
+[16.922s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/qpaig/my_ros2_ws/src/install/setup.ps1'
+[16.926s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/qpaig/my_ros2_ws/src/install/local_setup.sh'
+[16.927s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/qpaig/my_ros2_ws/src/install/_local_setup_util_sh.py'
+[16.927s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/qpaig/my_ros2_ws/src/install/setup.sh'
+[16.932s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/qpaig/my_ros2_ws/src/install/local_setup.bash'
+[16.932s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/qpaig/my_ros2_ws/src/install/setup.bash'
+[16.936s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/qpaig/my_ros2_ws/src/install/local_setup.zsh'
+[16.936s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/qpaig/my_ros2_ws/src/install/setup.zsh'

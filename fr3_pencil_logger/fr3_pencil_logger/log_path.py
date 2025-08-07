@@ -7,6 +7,7 @@ from visualization_msgs.msg import Marker
 from builtin_interfaces.msg import Duration
 from tf2_ros import Buffer, TransformListener, TransformException
 import math
+import yaml
 
 class PencilTipTracer(Node):
     def __init__(self):
@@ -21,7 +22,10 @@ class PencilTipTracer(Node):
         self.delete_previous_board()
 
         self.current_marker_id = 0
-        self.drawing_height = 0.04 # previous: 0.3
+        with open("/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/raster_config/config.yaml", "r") as file:
+            data = yaml.safe_load(file)
+
+        self.drawing_height = data.get("pen_height") / 100 # previous: 0.04
         self.error_margin = 0.003
 
         self.current_marker = self._create_new_marker()
@@ -61,7 +65,7 @@ class PencilTipTracer(Node):
         self.publish_board()
 
         try:
-            tf = self.buffer.lookup_transform('fr3_link0', 'pencil_tip', rclpy.time.Time())
+            tf = self.buffer.lookup_transform('fr3_link0', 'fr3_hand_tcp', rclpy.time.Time()) # previous was pencil_tip
 
             pt = Point()
             pt.x = tf.transform.translation.x
@@ -69,6 +73,7 @@ class PencilTipTracer(Node):
             pt.z = tf.transform.translation.z
             
             if abs(pt.z - self.drawing_height) <= self.error_margin:
+                    pt.z = 0.04 # preioiusly this was not there
                     self.current_marker.points.append(pt)
             else:
                 # Publish the old marker

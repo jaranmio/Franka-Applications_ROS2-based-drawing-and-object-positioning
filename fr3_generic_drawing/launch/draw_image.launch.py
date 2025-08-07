@@ -44,6 +44,11 @@ def generate_launch_description():
         .to_moveit_configs()
     )
 
+    moveit_config.planning_pipelines["ompl"]["fr3_arm"]["enforce_constrained_state_space"] = True
+    moveit_config.planning_pipelines["ompl"]["fr3_arm"]["projection_evaluator"] = "joints(fr3_joint1,fr3_joint2)"
+    moveit_config.planning_pipelines["ompl"]["fr3_arm_hand"]["enforce_constrained_state_space"] = True
+    moveit_config.planning_pipelines["ompl"]["fr3_arm_hand"]["projection_evaluator"] = "joints(fr3_joint1,fr3_joint2)"
+
     return LaunchDescription([
         Node(
             package="fr3_generic_drawing",

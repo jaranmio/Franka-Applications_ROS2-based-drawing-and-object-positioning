@@ -38,9 +38,9 @@ double DRAWING_HEIGHT = pen_height;
 // 0.182c Paris Conte Charcoal add groundplate
 // 0.132 - creata color monolith HB
 // 0.16 (approx. not working) - carbon sketch
-const double Z_PENCIL_DOWN = DRAWING_HEIGHT;
+double Z_PENCIL_DOWN = DRAWING_HEIGHT;
 const double RAISING_AMOUNT = 0.05;
-const double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
+double Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
 const double X_ORIGIN = center_x;
 const double Y_ORIGIN = center_y;
 const int SEGMENT_SIZE = 10 * 2;
@@ -403,7 +403,7 @@ int main(int argc, char **argv)
             return true;
         };
 
-        if (!execute_with_timeout(10)) {
+        if (!execute_with_timeout(60)) {
             rclcpp::sleep_for(std::chrono::milliseconds(20000));
             mg = moveit::planning_interface::MoveGroupInterface(node, "fr3_arm");
             configure_move_group(mg);
@@ -504,8 +504,9 @@ int main(int argc, char **argv)
             
             if (HALF_HOURS_ELASPED > half_hours_tracking) { // reduce height only once per half hour
                 const double HEIGHT_ADJUSTMENT = HALF_HOURS_ELASPED * height_rate;
-                DRAWING_HEIGHT -= HEIGHT_ADJUSTMENT;
-                RCLCPP_INFO(node->get_logger(), ("NEW HEIGHT SET: " + std::to_string(DRAWING_HEIGHT) + "m").c_str());
+                Z_PENCIL_DOWN -= HEIGHT_ADJUSTMENT;
+                Z_PENCIL_RAISED = Z_PENCIL_DOWN + RAISING_AMOUNT;
+                RCLCPP_INFO(node->get_logger(), ("NEW HEIGHT SET: " + std::to_string(Z_PENCIL_DOWN) + "m").c_str());
                 half_hours_tracking++;
             }
 
@@ -525,19 +526,6 @@ int main(int argc, char **argv)
             if (frac >= 0.95)
             {
                 stamp_and_execute(seg_traj);
-            }
-            else
-            {
-                mg.setPoseTarget(segment.back());
-                moveit::planning_interface::MoveGroupInterface::Plan plan;
-                if (mg.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS)
-                {
-                    mg.execute(plan);
-                    rclcpp::sleep_for(std::chrono::milliseconds(200));
-                }
-                else
-                {
-                }
             }
         }
 

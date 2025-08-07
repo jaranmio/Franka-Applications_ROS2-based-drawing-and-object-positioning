@@ -1,0 +1,97 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-a599c73f8d8ecedf22bd.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "fr3_generic_drawing",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "draw_image::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-draw_image-Release-6943ff2156d1a85cdba8.json",
+					"name" : "draw_image",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "draw_image_vector::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-draw_image_vector-Release-2397596927302b71e4ed.json",
+					"name" : "draw_image_vector",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "fr3_generic_drawing_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-fr3_generic_drawing_uninstall-Release-dfe64f2a8f7dfe0165b8.json",
+					"name" : "fr3_generic_drawing_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "repeat_test::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-repeat_test-Release-be3ddd335ed0aa8bfe8b.json",
+					"name" : "repeat_test",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-Release-10f46eb6a7908089ffdc.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/qpaig/my_ros2_ws/src/build/fr3_generic_drawing",
+		"source" : "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}
