@@ -6,6 +6,9 @@ image_file: image (7).png # bulb_battery.jpg
 # desired height, in cm, from the base plane of the arm (the table where the arm is mounted)
 pen_height: 18.7 # 24.6, 10.2
 
+# set this to true to have a vertical pen, and to false for an angled pen
+vertical_gripper: true
+
 # width of the paper on which the drawing is made, in cm
 paper_width: 60.0
 
