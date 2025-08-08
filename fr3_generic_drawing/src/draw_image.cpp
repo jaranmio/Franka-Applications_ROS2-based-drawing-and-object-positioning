@@ -30,6 +30,7 @@ double paper_length = config["paper_length"].as<double>() * std::pow(10, -2.0); 
 double paper_width = config["paper_width"].as<double>() * std::pow(10, -2.0); // along y, converted to m
 double center_x = config["image_center_x"].as<double>() * std::pow(10, -2.0); // to m
 double center_y = config["image_center_y"].as<double>() * std::pow(10, -2.0); // to m
+double vertical_gripper = config["vertical_gripper"].as<bool>(); // to m
 
 const std::string IMAGE_PATH = "/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/raster_config/images/" + image_file;
 double CONVERSION_FACTOR;
@@ -52,10 +53,11 @@ T clamp(T val, T low, T high)
     return std::max(low, std::min(val, high));
 }
 
-geometry_msgs::msg::Quaternion vertical_orientation()
+geometry_msgs::msg::Quaternion orientation()
 {
     tf2::Quaternion q;
-    q.setRPY(M_PI, 0, 0); // q.setRPY(M_PI, -M_PI / 3, 0);
+    if (vertical_gripper) q.setRPY(M_PI, 0, 0);
+    else q.setRPY(M_PI, -M_PI / 3, 0);
     q.normalize();
     return tf2::toMsg(q);
 }
@@ -66,7 +68,7 @@ geometry_msgs::msg::Pose image_to_pose(int px, int py, int img_w, int img_h, dou
     pose.position.x = X_ORIGIN + (img_h / 2.0 - py) * CONVERSION_FACTOR;
     pose.position.y = Y_ORIGIN + (img_w / 2.0 - px) * CONVERSION_FACTOR;
     pose.position.z = z;
-    pose.orientation = vertical_orientation();
+    pose.orientation = orientation();
     return pose;
 }
 
@@ -316,7 +318,7 @@ int main(int argc, char **argv)
         moveit_msgs::msg::OrientationConstraint oc;
         oc.link_name = move_group.getEndEffectorLink();
         oc.header.frame_id = "fr3_link0";
-        oc.orientation = vertical_orientation();
+        oc.orientation = orientation();
         oc.absolute_x_axis_tolerance = 0.1;
         oc.absolute_y_axis_tolerance = 0.1;
         oc.absolute_z_axis_tolerance = 0.1;

@@ -37,7 +37,7 @@ const double PRESSURE_RANGE = 0.002;
 const double X_ORIGIN = 0.4;
 const double Y_ORIGIN = 0.0;
 
-geometry_msgs::msg::Quaternion vertical_orientation() {
+geometry_msgs::msg::Quaternion orientation() {
     tf2::Quaternion q;
     q.setRPY(M_PI, 0, 0);
     q.normalize();
@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
     moveit_msgs::msg::OrientationConstraint oc;
     oc.link_name = mg.getEndEffectorLink();
     oc.header.frame_id = "base";
-    oc.orientation = vertical_orientation();
+    oc.orientation = orientation();
     oc.absolute_x_axis_tolerance = 0.1;
     oc.absolute_y_axis_tolerance = 0.1;
     oc.absolute_z_axis_tolerance = 0.1;
@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
         const auto& stroke = all_strokes[i];
         if (stroke.empty()) continue;
         std::vector<geometry_msgs::msg::Pose> wp;
-        geometry_msgs::msg::Quaternion ori = vertical_orientation();
+        geometry_msgs::msg::Quaternion ori = orientation();
         // pen-up to start
         int sx = stroke.front().x, sy = stroke.front().y;
         wp.push_back(image_to_pose(sx, sy, img.cols, img.rows, Z_PENCIL_RAISED, ori));
