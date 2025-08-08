@@ -1,0 +1,5 @@
+# ~/my_ros2_ws/src/franka_gripper_proxy/pyproject.toml
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
