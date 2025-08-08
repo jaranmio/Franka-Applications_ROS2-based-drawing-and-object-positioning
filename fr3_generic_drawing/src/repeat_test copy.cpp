@@ -52,7 +52,7 @@ T clamp(T val, T low, T high)
     return std::max(low, std::min(val, high));
 }
 
-geometry_msgs::msg::Quaternion vertical_orientation()
+geometry_msgs::msg::Quaternion orientation()
 {
     tf2::Quaternion q;
     q.setRPY(M_PI, 0, 0);
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     moveit_msgs::msg::OrientationConstraint oc;
     oc.link_name = mg.getEndEffectorLink();
     oc.header.frame_id = "fr3_link0";
-    oc.orientation = vertical_orientation();
+    oc.orientation = orientation();
     oc.absolute_x_axis_tolerance = 0.1;
     oc.absolute_y_axis_tolerance = 0.1;
     oc.absolute_z_axis_tolerance = 0.1;
@@ -120,12 +120,12 @@ int main(int argc, char **argv)
     pose1.position.x = 0.3;
     pose1.position.y = 0;
     pose1.position.z = 0.4;
-    pose1.orientation = vertical_orientation();
+    pose1.orientation = orientation();
     geometry_msgs::msg::Pose pose2;
     pose2.position.x = 0.5;
     pose2.position.y = 0;
     pose2.position.z = 0.4;
-    pose2.orientation = vertical_orientation();
+    pose2.orientation = orientation();
 
     geometry_msgs::msg::Pose  poses[] = {pose1, pose2};
 
