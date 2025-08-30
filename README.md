@@ -253,8 +253,3 @@ See individual package folders for license information.
 
 ---
 ```
-
----
-
-**You can copy and paste this entire block into a file named README.md.**  
-When viewed on GitHub, GitLab, or in VS Code, all headings, lists, and code blocks will be styled automatically according to Markdown rules.
