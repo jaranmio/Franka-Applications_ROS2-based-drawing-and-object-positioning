@@ -3,7 +3,9 @@
 This repository contains ROS2 packages for controlling the Franka Research 3 (FR3) robot arm for drawing (raster/vector), pick-and-place, and gripper proxy operations. It includes MoveIt2 integration, drawing nodes, and utility nodes for logging and calibration.
 
 ---
-![Demo](media/demo.gif)
+
+![Demo](demos/Pick And Place/pick_place_side.gif.gif)
+
 ## 💻 System Requirements
 
 - **Operating System:** Ubuntu 22.04 LTS (recommended)
