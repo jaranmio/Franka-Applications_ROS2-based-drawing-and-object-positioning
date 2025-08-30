@@ -11,7 +11,7 @@ This repository contains ROS2 packages for controlling the Franka Research 3 (FR
 - **Hardware:** Franka Research 3 (FR3) robot arm with FCI enabled
 - **RAM:** 16 GB (recommended)
 - **Disk Space:** 5 GB free
-- **Network:** Direct Ethernet connection to the FR3 robot (default IP: 172.16.0.2)
+- **Network:** Direct Ethernet connection to the FR3 robot controller (default IP: 172.16.0.2)
 - **Other:**
   - Python 3.10+
   - Colcon build system
@@ -106,22 +106,9 @@ ros2 action send_goal /fr3_gripper/homing franka_msgs/action/Homing {}
 
 ---
 
-#### 8. ➕ Open a Third Terminal Tab
-
-Open another terminal tab for drawing commands.
-
----
-
 #### 9. 🖼️ Launching the Drawing
 
-In the third terminal:
-
-```sh
-cd /home/qpaig/my_ros2_ws/src
-source fr3_fetch_robot_description.sh
-```
-
-Then choose one:
+Choose one:
 
 - **To draw raster (JPEG/PNG):**
   ```sh
@@ -134,15 +121,14 @@ Then choose one:
 
 ---
 
-#### 10. Changing Drawing Parameters
+#### 10. Changing Drawing Parameters such as the image file to draw, the height of the drawing plane, orientation of the pen, etc.
 
-- **To change drawing position, scale, pen height, or gripper orientation:**
+- **To change image, scale, pen height, or gripper orientation, etc:**
   - Go to the `config` folder on the desktop.
-  - Open `config.yaml` and adjust parameters:
+  - Open `config.yaml` and adjust parameters, for example:
     - `image_center_y`: Horizontal position of the image center (in cm, relative to the arm base).
     - `vertical_gripper`: Set to `true` for a vertical pen, `false` for an angled pen.
-    - `drawing_height`: Set the pen height (in meters).
-    - Other parameters for scaling and offsets as needed.
+    - Other parameters may be modified as needed as needed.
 
 - **After changing `config.yaml`, relaunch the drawing node as in step 9.**
 
@@ -169,22 +155,6 @@ Press <kbd>Ctrl</kbd> + <kbd>C</kbd> in the drawing terminal.
 
 ---
 
-#### 14. To Change Drawings
-
-- On the desktop, use the `copy_from_here` and `paste_here` folders.
-- Copy your image to `paste_here` and rename it to `image.png`.
-- Follow the drawing launch instructions above.
-- Adjust scaling in `config.yaml` if the drawing is too small or large.
-
----
-
-#### 15. To Change Gripper Orientation
-
-- In the `config` folder on the desktop, open `config.yaml`.
-- Set `vertical_gripper: true` for a vertical pen, or `false` for an angled pen.
-
----
-
 > **Tip:**  
 > For any configuration changes in `config.yaml`, always relaunch the drawing node.
 
@@ -206,7 +176,7 @@ This node acts as a proxy for gripper actions during pick and place operations.
 
 ### 2. Configure MoveIt2 to Use the Proxy
 
-1. Navigate to the MoveIt2 configuration folder:
+1. Navigate to the MoveIt2 configuration folder, for example:
 
     ```sh
     cd /home/qpaig/franka_ros2_ws/install/franka_fr3_moveit_config/share/franka_fr3_moveit_config/config
@@ -269,4 +239,3 @@ colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 See individual package folders for license information.
 
 ---
-```
