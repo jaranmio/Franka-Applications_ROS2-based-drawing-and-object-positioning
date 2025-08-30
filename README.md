@@ -4,6 +4,8 @@ This repository contains ROS2 packages for controlling the Franka Research 3 (FR
 
 ---
 
+![til](./demos/Pick And Place/pick_place_side.gif)
+
 ## 💻 System Requirements
 
 - **Operating System:** Ubuntu 22.04 LTS (recommended)
