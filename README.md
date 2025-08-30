@@ -4,7 +4,7 @@ This repository contains ROS2 packages for controlling the Franka Research 3 (FR
 
 ---
 
-![Demo](demos/Pick And Place/pick_place_side.gif)
+![til](./demos/Pick And Place/pick_place_side.gif)
 
 ## 💻 System Requirements
 
