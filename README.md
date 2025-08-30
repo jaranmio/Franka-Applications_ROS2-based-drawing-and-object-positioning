@@ -4,6 +4,23 @@ This repository contains ROS2 packages for controlling the Franka Research 3 (FR
 
 ---
 
+## 💻 System Requirements
+
+- **Operating System:** Ubuntu 22.04 LTS (recommended)
+- **ROS 2:** Humble (or compatible ROS 2 distribution)
+- **Hardware:** Franka Research 3 (FR3) robot arm with FCI enabled
+- **RAM:** 16 GB (recommended)
+- **Disk Space:** 5 GB free
+- **Network:** Direct Ethernet connection to the FR3 robot (default IP: 172.16.0.2)
+- **Other:**
+  - Python 3.10+
+  - Colcon build system
+  - RViz2
+  - Visual Studio Code (recommended for editing)
+  - Access to [https://172.16.0.2/desk/](https://172.16.0.2/desk/) for robot control
+
+---
+
 ## Packages Overview
 
 - **fr3_generic_drawing**: Main drawing logic (raster and vector).
