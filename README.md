@@ -1,1 +1,1 @@
-# Franka Applications: ROS2-based drawing and object positioning
+# Franka Applications: ROS2-based Drawing & Pick-and-Place
