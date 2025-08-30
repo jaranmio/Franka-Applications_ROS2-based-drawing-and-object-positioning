@@ -1,1 +1,0 @@
-/home/qpaig/my_ros2_ws/src/fr3_generic_drawing/launch/draw_image_vector.launch.py

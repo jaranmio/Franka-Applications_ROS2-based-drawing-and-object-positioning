@@ -1,8 +1,0 @@
-source;share/fr3_generic_drawing/hook/cmake_prefix_path.ps1
-source;share/fr3_generic_drawing/hook/cmake_prefix_path.dsv
-source;share/fr3_generic_drawing/hook/cmake_prefix_path.sh
-source;share/fr3_generic_drawing/local_setup.bash
-source;share/fr3_generic_drawing/local_setup.dsv
-source;share/fr3_generic_drawing/local_setup.ps1
-source;share/fr3_generic_drawing/local_setup.sh
-source;share/fr3_generic_drawing/local_setup.zsh
