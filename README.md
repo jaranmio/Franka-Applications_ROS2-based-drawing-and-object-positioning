@@ -1,1 +1,1 @@
-# franka_drawing_repo
+# Franka Applications: ROS2-based drawing and object positioning
