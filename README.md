@@ -1,4 +1,4 @@
-# Franka Applications: ROS2-based Drawing & Pick-and-Place
+# Franka Applications: ROS2-based Robot Drawing & Pick-and-Place
 
 This repository contains ROS2 packages for controlling the Franka Research 3 (FR3) robot arm for drawing (raster/vector), pick-and-place, and gripper proxy operations. It includes MoveIt2 integration, drawing nodes, and utility nodes for logging and calibration.
 
