@@ -24,7 +24,7 @@ This repository contains ROS2 packages for controlling the Franka Research 3 (FR
 ## Packages Overview
 
 - **fr3_generic_drawing**: Main drawing logic (raster and vector).
-- **fr3_pick_and_place**: Pick and place demo.
+- **fr3_pick_and_place**: Pick and place logic.
 - **franka_gripper_proxy**: Gripper command proxy for MoveIt2.
 - **fr3_moveit_config**: MoveIt2 configuration for FR3.
 - **fr3_pencil_logger**: Logs the pencil tip position.
