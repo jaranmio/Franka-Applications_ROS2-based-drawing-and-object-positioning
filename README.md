@@ -4,7 +4,7 @@ This repository contains ROS2 packages for controlling the Franka Research 3 (FR
 
 ---
 
-## 📦 Packages Overview
+## Packages Overview
 
 - **fr3_generic_drawing**: Main drawing logic (raster and vector).
 - **fr3_pick_and_place**: Pick and place demo.
@@ -15,7 +15,7 @@ This repository contains ROS2 packages for controlling the Franka Research 3 (FR
 
 ---
 
-## 🖊️ Drawing Instructions
+## Drawing Instructions
 
 ### Franka Research 3 Control Guide with MoveIt2 + Gripper
 
@@ -25,13 +25,13 @@ This repository contains ROS2 packages for controlling the Franka Research 3 (FR
 
 ---
 
-#### 1. 🧰 Open a Terminal
+#### 1. Open a Terminal
 
 Press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> to open a new terminal window.
 
 ---
 
-#### 2. 🚀 Launch the FR3 Move Group with MoveIt2
+#### 2. Launch the FR3 Move Group with MoveIt2
 
 ```sh
 ros2 launch franka_fr3_moveit_config moveit.launch.py robot_ip:=172.16.0.2
@@ -47,7 +47,7 @@ Open a new terminal tab.
 
 ---
 
-#### 4. 👐 Open the Gripper
+#### 4. Open the Gripper
 
 ```sh
 ros2 action send_goal -f /fr3_gripper/move franka_msgs/action/Move "{width: 0.07, speed: 0.05}"
@@ -56,7 +56,7 @@ ros2 action send_goal -f /fr3_gripper/move franka_msgs/action/Move "{width: 0.07
 
 ---
 
-#### 5. 🤏 Close the Gripper (e.g. for gripping a pen)
+#### 5. Close the Gripper (e.g. for gripping a pen)
 
 Try one of the following, depending on your pen/object:
 
@@ -117,7 +117,7 @@ Then choose one:
 
 ---
 
-#### 10. ✏️ Changing Drawing Parameters
+#### 10. Changing Drawing Parameters
 
 - **To change drawing position, scale, pen height, or gripper orientation:**
   - Go to the `config` folder on the desktop.
@@ -250,13 +250,6 @@ colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 ## 📄 License
 
 See individual package folders for license information.
-
----
-
-## 📚 References
-
-- [MoveIt2 Documentation](https://moveit.ros.org/)
-- [Franka Emika Documentation](https://frankaemika.github.io/docs/)
 
 ---
 ```
