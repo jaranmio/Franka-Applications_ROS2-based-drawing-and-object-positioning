@@ -232,6 +232,11 @@ From the workspace root:
 colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 ```
 
+Then source the install folder:
+```sh
+source install/setup.bash
+```
+
 ---
 
 ## 📄 License
